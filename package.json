@@ -1,0 +1,20 @@
+{
+  "name": "ElectricCircuits",
+  "main": "./lib/ElectricCircuits.js",
+  "version": "0.0.0",
+  "description": "hanyeah's electric circuits",
+  "typings": "./lib/ElectricCircuits.d.ts",
+  "author": "hanyeah <hanlidong@yeah.net> (http://hanyeah.com)",
+  "scripts": {
+    "start": "npm run build && npm run server",
+    "copylibs": "node ./scripts/copylibs.js",
+    "install": "npm install && copylibs",
+    "build": "tsc-plus --reorderFiles && node ./scripts/build.js",
+    "server": "cd ./dist && live-server"
+  },
+  "dependencies": {
+    "Electricity": "git+ssh://git@github.com:hanyeah/Electricity.git",
+    "PixiTs": "git+ssh://git@github.com:hanyeah/PixiTs.git"
+  },
+  "devDependencies": {}
+}
