@@ -42,6 +42,7 @@ declare namespace hanyeah.elec.eqs {
     import ElecEq = hanyeah.elec.base.ElecEq;
     class SingleSwitch extends ElecEq {
         constructor();
+        initSkin(): void;
     }
 }
 declare namespace hanyeah.elec.eqs {

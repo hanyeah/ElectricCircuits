@@ -24,6 +24,8 @@ namespace hanyeah.elec {
       this.eqLayer.addChild(resistance);
       resistance.x = 200;
       resistance.y = 300;
+
+
     }
   }
 }

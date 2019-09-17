@@ -165,6 +165,8 @@ var hanyeah;
                 function SingleSwitch() {
                     return _super.call(this) || this;
                 }
+                SingleSwitch.prototype.initSkin = function () {
+                };
                 return SingleSwitch;
             }(ElecEq));
             eqs.SingleSwitch = SingleSwitch;
