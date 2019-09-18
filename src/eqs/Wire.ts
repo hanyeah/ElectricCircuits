@@ -1,7 +1,7 @@
-namespace hanyeah.elec.eqs{
+namespace hanyeah.elec{
   export class Wire extends Resistance{
-    constructor() {
-      super();
+    constructor(main: ElecMain) {
+      super(main);
     }
   }
 }

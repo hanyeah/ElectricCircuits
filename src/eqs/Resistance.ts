@@ -1,9 +1,7 @@
-namespace hanyeah.elec.eqs {
-  import ElecEq = hanyeah.elec.base.ElecEq;
-
+namespace hanyeah.elec {
   export class Resistance extends ElecEq {
-    constructor() {
-      super();
+    constructor(main: ElecMain) {
+      super(main);
     }
 
     initSkin() {

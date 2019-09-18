@@ -1,9 +1,8 @@
-namespace hanyeah.elec.eqs {
-  import VoltageSource = hanyeah.elec.base.VoltageSource;
+namespace hanyeah.elec {
   export class Battery extends VoltageSource {
 
-    constructor() {
-      super();
+    constructor(main: ElecMain) {
+      super(main);
     }
 
     initSkin() {

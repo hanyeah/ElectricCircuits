@@ -1,9 +1,9 @@
 {
   "name": "ElectricCircuits",
-  "main": "./lib/ElectricCircuits.js",
+  "main": "./lib/ElecMain.js",
   "version": "0.0.0",
   "description": "hanyeah's electric circuits",
-  "typings": "./lib/ElectricCircuits.d.ts",
+  "typings": "./lib/ElecMain.d.ts",
   "author": "hanyeah <hanlidong@yeah.net> (http://hanyeah.com)",
   "scripts": {
     "start": "npm run build && npm run server",

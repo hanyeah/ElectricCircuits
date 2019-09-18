@@ -2417,6 +2417,7 @@ declare namespace PIXI {
 
             autoStart: boolean;
             deltaTime: number;
+            deltaMS: number;
             elapsedMS: number;
             lastTime: number;
             speed: number;

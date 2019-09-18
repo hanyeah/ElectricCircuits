@@ -5,7 +5,7 @@
     "sourceMap": false,
     "declaration": true,
     "experimentalDecorators": true,
-    "outFile": "lib/ElectricCircuits.js",
+    "outFile": "lib/ElecMain.js",
     "reorderFiles": true
   },
   "include": [

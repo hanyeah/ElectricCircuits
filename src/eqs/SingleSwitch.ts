@@ -1,9 +1,8 @@
-namespace hanyeah.elec.eqs{
-  import ElecEq = hanyeah.elec.base.ElecEq;
+namespace hanyeah.elec{
 
   export class SingleSwitch extends ElecEq{
-    constructor() {
-      super();
+    constructor(main: ElecMain) {
+      super(main);
     }
 
     initSkin(){
