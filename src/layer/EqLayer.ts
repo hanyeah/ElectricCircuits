@@ -3,7 +3,7 @@
  */
 namespace hanyeah.elec{
   export class EqLayer extends Container{
-    constructor(main:ElecMain){
+    constructor(main: ElecMain){
       super(main);
       this.interactive = true;
     }

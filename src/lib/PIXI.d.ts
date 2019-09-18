@@ -95,7 +95,7 @@ declare namespace PIXI {
                 displayObject: DisplayObject
             ): void;
             protected update(): void;
-            protected capHitArea(hitArea: HitArea): void;
+            protected capIHitArea(hitArea: IHitArea): void;
             protected addChild(displayObject: DisplayObject): void;
             protected _onClick(e: interaction.InteractionEvent): void;
             protected _onFocus(e: interaction.InteractionEvent): void;
@@ -376,7 +376,7 @@ declare namespace PIXI {
             | PIXI.Ellipse
             | PIXI.Polygon
             | PIXI.RoundedRectangle
-            | PIXI.HitArea;
+            | PIXI.IHitArea;
         buttonMode: boolean;
         cursor: string;
         trackedPointers: { [key: number]: interaction.InteractionTrackingData };
@@ -880,10 +880,10 @@ declare namespace PIXI {
         clone(): Point;
         equals(p: PointLike): boolean;
     }
-    interface HitArea {
+    interface IHitArea {
         contains(x: number, y: number): boolean;
     }
-    class Circle implements HitArea {
+    class Circle implements IHitArea {
         constructor(x?: number, y?: number, radius?: number);
 
         x: number;
@@ -895,7 +895,7 @@ declare namespace PIXI {
         contains(x: number, y: number): boolean;
         getBounds(): Rectangle;
     }
-    class Ellipse implements HitArea {
+    class Ellipse implements IHitArea {
         constructor(
             x?: number,
             y?: number,
@@ -913,7 +913,7 @@ declare namespace PIXI {
         contains(x: number, y: number): boolean;
         getBounds(): Rectangle;
     }
-    class Polygon implements HitArea {
+    class Polygon implements IHitArea {
         constructor(points: Point[] | number[]);
         // Note - Rest Params cannot be combined with |
         //tslint:disable-next-line:unified-signatures
@@ -929,7 +929,7 @@ declare namespace PIXI {
         contains(x: number, y: number): boolean;
         close(): void;
     }
-    class Rectangle implements HitArea {
+    class Rectangle implements IHitArea {
         constructor(x?: number, y?: number, width?: number, height?: number);
 
         x: number;
@@ -952,7 +952,7 @@ declare namespace PIXI {
         fit(rectangle: Rectangle): void;
         enlarge(rectangle: Rectangle): void;
     }
-    class RoundedRectangle implements HitArea {
+    class RoundedRectangle implements IHitArea {
         constructor(
             x?: number,
             y?: number,
@@ -2818,7 +2818,7 @@ declare namespace PIXI {
                 | PIXI.Ellipse
                 | PIXI.Polygon
                 | PIXI.RoundedRectangle
-                | PIXI.HitArea;
+                | PIXI.IHitArea;
             buttonMode: boolean;
             cursor: string;
             trackedPointers: { [key: number]: InteractionTrackingData };

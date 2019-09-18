@@ -22,14 +22,6 @@ declare namespace hanyeah.elec {
         update(dt: number): void;
     }
 }
-declare namespace hanyeah.elec {
-    class ElecEq extends EqBase {
-        U: number;
-        I: number;
-        R: number;
-        constructor(main: ElecMain);
-    }
-}
 /**
  * Created by hanyeah on 2019/9/18.
  */
@@ -41,15 +33,23 @@ declare namespace hanyeah.elec {
     }
 }
 declare namespace hanyeah.elec {
-    class Resistance extends ElecEq {
+    class ElecEq extends EqBase {
+        U: number;
+        I: number;
+        R: number;
         constructor(main: ElecMain);
-        initSkin(): void;
     }
 }
 declare namespace hanyeah.elec {
     class VoltageSource extends ElecEq {
         SU: number;
         constructor(main: ElecMain);
+    }
+}
+declare namespace hanyeah.elec {
+    class Resistance extends ElecEq {
+        constructor(main: ElecMain);
+        initSkin(): void;
     }
 }
 /**
@@ -65,18 +65,28 @@ declare namespace hanyeah.elec {
 declare namespace hanyeah.elec {
     class ElecMain extends HObject {
         stage: PIXI.Container;
-        eqLayer: EqLayer;
+        bg: PIXI.Graphics;
+        viewStack: ViewStack;
         private selectPlugin;
         private dragPlugin;
+        private roamPlugin;
         private selects;
         private ticker;
         constructor(canvas: HTMLCanvasElement);
         destroy(): void;
         update(deltaTime: any): void;
+        resized(): void;
         startTicker(): void;
         stopTicker(): void;
         select(eqs: EqBase[], add: boolean): void;
         moveSelectBy(dx: number, dy: number): void;
+        moveStageBy(dx: number, dy: number): void;
+    }
+}
+declare namespace hanyeah.elec {
+    class Battery extends VoltageSource {
+        constructor(main: ElecMain);
+        initSkin(): void;
     }
 }
 declare namespace hanyeah.elec {
@@ -98,6 +108,15 @@ declare namespace hanyeah.elec {
         constructor(main: ElecMain);
     }
 }
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class ViewStack extends Container {
+        eqLayer: EqLayer;
+        constructor(main: ElecMain);
+    }
+}
 declare namespace hanyeah.elec {
     class DragPlugin extends PluginBase {
         private map;
@@ -108,10 +127,17 @@ declare namespace hanyeah.elec {
         private mouseUpHandler;
     }
 }
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
 declare namespace hanyeah.elec {
-    class Battery extends VoltageSource {
+    class RoamPlugin extends PluginBase {
+        private map;
         constructor(main: ElecMain);
-        initSkin(): void;
+        destroy(): void;
+        private mouseDownHandler;
+        private mouseMoveHandler;
+        private mouseUpHandler;
     }
 }
 /**
@@ -121,7 +147,6 @@ declare namespace hanyeah.elec {
     class SelectPlugin extends PluginBase {
         constructor(main: ElecMain);
         destroy(): void;
-        private mouseDownHandler;
         private stageClickHandler;
     }
 }
