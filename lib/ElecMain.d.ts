@@ -24,14 +24,6 @@ declare namespace hanyeah.elec {
         update(dt: number): void;
     }
 }
-declare namespace hanyeah.elec {
-    class ElecEq extends EqBase {
-        U: number;
-        I: number;
-        R: number;
-        constructor(main: ElecMain);
-    }
-}
 /**
  * Created by hanyeah on 2019/9/18.
  */
@@ -40,6 +32,14 @@ declare namespace hanyeah.elec {
         private static COUNTING;
         UID: number;
         constructor();
+    }
+}
+declare namespace hanyeah.elec {
+    class ElecEq extends EqBase {
+        U: number;
+        I: number;
+        R: number;
+        constructor(main: ElecMain);
     }
 }
 declare namespace hanyeah.elec {
@@ -78,62 +78,9 @@ declare namespace hanyeah.elec {
         getData(): any;
     }
 }
-/**
- * Created by hanyeah on 2019/9/19.
- */
-declare namespace hanyeah.elec {
-    class HEvent extends HObject {
-        static DRAG_START: string;
-        static DRAG_MOVE: string;
-        constructor();
-    }
-}
-declare namespace hanyeah.elec {
-    class Wire extends Resistance {
-        constructor(main: ElecMain);
-    }
-}
-declare namespace hanyeah.elec {
-    class Battery extends VoltageSource {
-        constructor(main: ElecMain);
-        initSkin(): void;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/18.
- */
-declare namespace hanyeah.elec {
-    class EqLayer extends Container {
-        constructor(main: ElecMain);
-        /**
-         * 根据UID获取器材。
-         * @param UID
-         * @returns {any}
-         */
-        getEqByUID(UID: number): EqBase;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/18.
- */
-declare namespace hanyeah.elec {
-    class ViewStack extends Container {
-        eqLayer: EqLayer;
-        constructor(main: ElecMain);
-    }
-}
-declare namespace hanyeah.elec {
-    class DragPlugin extends PluginBase {
-        private map;
-        constructor(main: ElecMain);
-        destroy(): void;
-        private mouseDownHandler;
-        private mouseMoveHandler;
-        private mouseUpHandler;
-    }
-}
 declare namespace hanyeah.elec {
     import Point = PIXI.Point;
+    import Rectangle = PIXI.Rectangle;
     class ElecMain extends HObject {
         app: PIXI.Application;
         canvas: HTMLCanvasElement;
@@ -157,7 +104,69 @@ declare namespace hanyeah.elec {
         removeEq(UID: number): EqBase;
         moveSelectBy(dx: number, dy: number): void;
         moveStageBy(dx: number, dy: number): void;
-        scaleBy(s: number, p: PIXI.Point): void;
+        scaleBy(s: number, p: Point): void;
+        selectByRect(rect: Rectangle): void;
+    }
+}
+declare namespace hanyeah.elec {
+    class Battery extends VoltageSource {
+        constructor(main: ElecMain);
+        initSkin(): void;
+    }
+}
+declare namespace hanyeah.elec {
+    class SingleSwitch extends ElecEq {
+        constructor(main: ElecMain);
+        initSkin(): void;
+    }
+}
+declare namespace hanyeah.elec {
+    class Wire extends Resistance {
+        constructor(main: ElecMain);
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
+declare namespace hanyeah.elec {
+    class HEvent extends HObject {
+        static DRAG_START: string;
+        static DRAG_MOVE: string;
+        constructor();
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class EqLayer extends Container {
+        constructor(main: ElecMain);
+        /**
+         * 根据UID获取器材。
+         * @param UID
+         * @returns {any}
+         */
+        getEqByUID(UID: number): EqBase;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class ViewStack extends Container {
+        eqLayer: EqLayer;
+        assistLayer: Container;
+        constructor(main: ElecMain);
+    }
+}
+declare namespace hanyeah.elec {
+    class DragPlugin extends PluginBase {
+        private map;
+        constructor(main: ElecMain);
+        destroy(): void;
+        private mouseDownHandler;
+        private mouseMoveHandler;
+        private mouseUpHandler;
     }
 }
 /**
@@ -178,9 +187,13 @@ declare namespace hanyeah.elec {
  */
 declare namespace hanyeah.elec {
     class SelectPlugin extends PluginBase {
+        private map;
         constructor(main: ElecMain);
         destroy(): void;
         private stageClickHandler;
+        private rightDownHandler;
+        private rightUpHandler;
+        private mouseMoveHandler;
     }
 }
 /**
@@ -211,12 +224,6 @@ declare namespace hanyeah.elec {
         redo(): void;
         undo(): void;
         getData(): any;
-    }
-}
-declare namespace hanyeah.elec {
-    class SingleSwitch extends ElecEq {
-        constructor(main: ElecMain);
-        initSkin(): void;
     }
 }
 /**

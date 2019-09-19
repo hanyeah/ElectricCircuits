@@ -1,6 +1,7 @@
 namespace hanyeah.elec {
 
   import Point = PIXI.Point;
+  import Rectangle = PIXI.Rectangle;
   export class ElecMain extends HObject {
 
     public app: PIXI.Application;
@@ -128,13 +129,29 @@ namespace hanyeah.elec {
       this.viewStack.y += dy;
     }
 
-    scaleBy(s: number, p: PIXI.Point) {
+    scaleBy(s: number, p: Point) {
       const s0: number = this.viewStack.scale.x;
       const s1: number = s0 * s;
       this.viewStack.scale.x = s1;
       this.viewStack.scale.y = s1;
       this.viewStack.x += p.x * (1 - s) * s0;
       this.viewStack.y += p.y * (1 - s) * s0;
+    }
+
+    selectByRect(rect: Rectangle){
+      let eq: EqBase;
+      // const rect0: Rectangle;
+      const arr: EqBase[] = [];
+      for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
+        eq = this.viewStack.eqLayer.children[i] as EqBase;
+        // if (eq.getBounds(true, rect0).) {
+        //
+        // }
+        if(rect.contains(eq.x, eq.y)){
+          arr.push(eq);
+        }
+      }
+      this.select(arr, false);
     }
 
   }

@@ -84,24 +84,6 @@ var hanyeah;
         elec.EqBase = EqBase;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var ElecEq = /** @class */ (function (_super) {
-            __extends(ElecEq, _super);
-            function ElecEq(main) {
-                var _this = _super.call(this, main) || this;
-                _this.U = 0;
-                _this.I = 0;
-                _this.R = 0;
-                return _this;
-            }
-            return ElecEq;
-        }(elec.EqBase));
-        elec.ElecEq = ElecEq;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
 /**
  * Created by hanyeah on 2019/9/18.
  */
@@ -118,6 +100,24 @@ var hanyeah;
             return HObject;
         }());
         elec.HObject = HObject;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var ElecEq = /** @class */ (function (_super) {
+            __extends(ElecEq, _super);
+            function ElecEq(main) {
+                var _this = _super.call(this, main) || this;
+                _this.U = 0;
+                _this.I = 0;
+                _this.R = 0;
+                return _this;
+            }
+            return ElecEq;
+        }(elec.EqBase));
+        elec.ElecEq = ElecEq;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 var hanyeah;
@@ -210,179 +210,6 @@ var hanyeah;
         elec.RedoUndo = RedoUndo;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/19.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var HEvent = /** @class */ (function (_super) {
-            __extends(HEvent, _super);
-            function HEvent() {
-                return _super.call(this) || this;
-            }
-            HEvent.DRAG_START = "dragStart";
-            HEvent.DRAG_MOVE = "dragMove";
-            return HEvent;
-        }(elec.HObject));
-        elec.HEvent = HEvent;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Wire = /** @class */ (function (_super) {
-            __extends(Wire, _super);
-            function Wire(main) {
-                return _super.call(this, main) || this;
-            }
-            return Wire;
-        }(elec.Resistance));
-        elec.Wire = Wire;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Battery = /** @class */ (function (_super) {
-            __extends(Battery, _super);
-            function Battery(main) {
-                return _super.call(this, main) || this;
-            }
-            Battery.prototype.initSkin = function () {
-                var gra = new PIXI.Graphics();
-                gra.beginFill(0x000000, 1.0);
-                gra.drawRect(-50, -20, 100, 40);
-                gra.drawRect(50, -5, 4, 10);
-                gra.endFill();
-                this.addChild(gra);
-            };
-            return Battery;
-        }(elec.VoltageSource));
-        elec.Battery = Battery;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/18.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var EqLayer = /** @class */ (function (_super) {
-            __extends(EqLayer, _super);
-            function EqLayer(main) {
-                var _this = _super.call(this, main) || this;
-                _this.interactive = true;
-                return _this;
-            }
-            /**
-             * 根据UID获取器材。
-             * @param UID
-             * @returns {any}
-             */
-            EqLayer.prototype.getEqByUID = function (UID) {
-                var eq;
-                for (var i = 0; i < this.children.length; i++) {
-                    eq = this.children[i];
-                    if (eq.UID === UID) {
-                        return eq;
-                    }
-                }
-                return null;
-            };
-            return EqLayer;
-        }(elec.Container));
-        elec.EqLayer = EqLayer;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/18.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var ViewStack = /** @class */ (function (_super) {
-            __extends(ViewStack, _super);
-            function ViewStack(main) {
-                var _this = _super.call(this, main) || this;
-                _this.interactive = true;
-                _this.eqLayer = new elec.EqLayer(_this.main);
-                _this.addChild(_this.eqLayer);
-                return _this;
-            }
-            return ViewStack;
-        }(elec.Container));
-        elec.ViewStack = ViewStack;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var DragPlugin = /** @class */ (function (_super) {
-            __extends(DragPlugin, _super);
-            function DragPlugin(main) {
-                var _this = _super.call(this, main) || this;
-                _this.map = {};
-                _this.mouseDownHandler = function (e) {
-                    if (e.target instanceof elec.EqBase) {
-                        _this.map[e.data.identifier] = new DragItem(e.target, e.data.identifier, _this.main.viewStack.eqLayer.toLocal(e.data.global));
-                    }
-                };
-                _this.mouseMoveHandler = function (e) {
-                    var dragItem = _this.map[e.data.identifier];
-                    if (dragItem) {
-                        if (!dragItem.eq.isSelect) {
-                            _this.main.select([dragItem.eq], e.data.originalEvent.ctrlKey);
-                        }
-                        var p = _this.main.viewStack.eqLayer.toLocal(e.data.global);
-                        _this.main.moveSelectBy(p.x - dragItem.p.x, p.y - dragItem.p.y);
-                        dragItem.p = p;
-                        dragItem.moved = true;
-                    }
-                };
-                _this.mouseUpHandler = function (e) {
-                    if (_this.map[e.data.identifier]) {
-                        var dragItem = _this.map[e.data.identifier];
-                        if (dragItem.moved) {
-                            e.stopPropagation();
-                        }
-                        delete _this.map[e.data.identifier];
-                    }
-                };
-                _this.main.viewStack.eqLayer.addListener("pointerdown", _this.mouseDownHandler);
-                _this.main.stage.addListener("pointermove", _this.mouseMoveHandler);
-                _this.main.stage.addListener("pointerup", _this.mouseUpHandler);
-                _this.main.stage.addListener("pointerupoutside", _this.mouseUpHandler);
-                return _this;
-            }
-            DragPlugin.prototype.destroy = function () {
-                this.main.viewStack.eqLayer.removeListener("pointerdown", this.mouseDownHandler);
-                this.main.stage.removeListener("pointermove", this.mouseMoveHandler);
-                this.main.stage.removeListener("pointerup", this.mouseUpHandler);
-                this.main.stage.removeListener("pointerupoutside", this.mouseUpHandler);
-                this.map = null;
-                _super.prototype.destroy.call(this);
-            };
-            return DragPlugin;
-        }(elec.PluginBase));
-        elec.DragPlugin = DragPlugin;
-        var DragItem = /** @class */ (function () {
-            function DragItem(eq, id, p) {
-                this.moved = false;
-                this.eq = eq;
-                this.id = id;
-                this.p = p;
-            }
-            return DragItem;
-        }());
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
 var hanyeah;
 (function (hanyeah) {
     var elec;
@@ -393,8 +220,7 @@ var hanyeah;
             function ElecMain(canvas) {
                 var _this = _super.call(this) || this;
                 _this.selects = [];
-                console.log("ElecMain");
-                console.log(_this);
+                window.main = _this;
                 // init app
                 _this.canvas = canvas;
                 _this.app = new PIXI.Application({ view: canvas, transparent: true });
@@ -501,6 +327,21 @@ var hanyeah;
                 this.viewStack.x += p.x * (1 - s) * s0;
                 this.viewStack.y += p.y * (1 - s) * s0;
             };
+            ElecMain.prototype.selectByRect = function (rect) {
+                var eq;
+                // const rect0: Rectangle;
+                var arr = [];
+                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
+                    eq = this.viewStack.eqLayer.children[i];
+                    // if (eq.getBounds(true, rect0).) {
+                    //
+                    // }
+                    if (rect.contains(eq.x, eq.y)) {
+                        arr.push(eq);
+                    }
+                }
+                this.select(arr, false);
+            };
             return ElecMain;
         }(elec.HObject));
         elec.ElecMain = ElecMain;
@@ -518,6 +359,197 @@ var hanyeah;
         }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Battery = /** @class */ (function (_super) {
+            __extends(Battery, _super);
+            function Battery(main) {
+                return _super.call(this, main) || this;
+            }
+            Battery.prototype.initSkin = function () {
+                var gra = new PIXI.Graphics();
+                gra.beginFill(0x000000, 1.0);
+                gra.drawRect(-50, -20, 100, 40);
+                gra.drawRect(50, -5, 4, 10);
+                gra.endFill();
+                this.addChild(gra);
+            };
+            return Battery;
+        }(elec.VoltageSource));
+        elec.Battery = Battery;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var SingleSwitch = /** @class */ (function (_super) {
+            __extends(SingleSwitch, _super);
+            function SingleSwitch(main) {
+                return _super.call(this, main) || this;
+            }
+            SingleSwitch.prototype.initSkin = function () {
+            };
+            return SingleSwitch;
+        }(elec.ElecEq));
+        elec.SingleSwitch = SingleSwitch;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Wire = /** @class */ (function (_super) {
+            __extends(Wire, _super);
+            function Wire(main) {
+                return _super.call(this, main) || this;
+            }
+            return Wire;
+        }(elec.Resistance));
+        elec.Wire = Wire;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var HEvent = /** @class */ (function (_super) {
+            __extends(HEvent, _super);
+            function HEvent() {
+                return _super.call(this) || this;
+            }
+            HEvent.DRAG_START = "dragStart";
+            HEvent.DRAG_MOVE = "dragMove";
+            return HEvent;
+        }(elec.HObject));
+        elec.HEvent = HEvent;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var EqLayer = /** @class */ (function (_super) {
+            __extends(EqLayer, _super);
+            function EqLayer(main) {
+                var _this = _super.call(this, main) || this;
+                _this.interactive = true;
+                return _this;
+            }
+            /**
+             * 根据UID获取器材。
+             * @param UID
+             * @returns {any}
+             */
+            EqLayer.prototype.getEqByUID = function (UID) {
+                var eq;
+                for (var i = 0; i < this.children.length; i++) {
+                    eq = this.children[i];
+                    if (eq.UID === UID) {
+                        return eq;
+                    }
+                }
+                return null;
+            };
+            return EqLayer;
+        }(elec.Container));
+        elec.EqLayer = EqLayer;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var ViewStack = /** @class */ (function (_super) {
+            __extends(ViewStack, _super);
+            function ViewStack(main) {
+                var _this = _super.call(this, main) || this;
+                _this.interactive = true;
+                _this.eqLayer = new elec.EqLayer(_this.main);
+                _this.addChild(_this.eqLayer);
+                _this.assistLayer = new elec.Container(_this.main);
+                _this.addChild(_this.assistLayer);
+                return _this;
+            }
+            return ViewStack;
+        }(elec.Container));
+        elec.ViewStack = ViewStack;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var DragPlugin = /** @class */ (function (_super) {
+            __extends(DragPlugin, _super);
+            function DragPlugin(main) {
+                var _this = _super.call(this, main) || this;
+                _this.map = {};
+                _this.mouseDownHandler = function (e) {
+                    if (e.target instanceof elec.EqBase) {
+                        _this.map[e.data.identifier] = new DragItem(e.target, e.data.identifier, _this.main.viewStack.eqLayer.toLocal(e.data.global));
+                    }
+                };
+                _this.mouseMoveHandler = function (e) {
+                    var dragItem = _this.map[e.data.identifier];
+                    if (dragItem) {
+                        if (!dragItem.eq.isSelect) {
+                            _this.main.select([dragItem.eq], e.data.originalEvent.ctrlKey);
+                        }
+                        var p = _this.main.viewStack.eqLayer.toLocal(e.data.global);
+                        _this.main.moveSelectBy(p.x - dragItem.p.x, p.y - dragItem.p.y);
+                        dragItem.p = p;
+                        dragItem.moved = true;
+                    }
+                };
+                _this.mouseUpHandler = function (e) {
+                    if (_this.map[e.data.identifier]) {
+                        var dragItem = _this.map[e.data.identifier];
+                        if (dragItem.moved) {
+                            e.stopPropagation();
+                        }
+                        delete _this.map[e.data.identifier];
+                    }
+                };
+                _this.main.viewStack.eqLayer.addListener("pointerdown", _this.mouseDownHandler);
+                _this.main.stage.addListener("pointermove", _this.mouseMoveHandler);
+                _this.main.stage.addListener("pointerup", _this.mouseUpHandler);
+                _this.main.stage.addListener("pointerupoutside", _this.mouseUpHandler);
+                return _this;
+            }
+            DragPlugin.prototype.destroy = function () {
+                this.main.viewStack.eqLayer.removeListener("pointerdown", this.mouseDownHandler);
+                this.main.stage.removeListener("pointermove", this.mouseMoveHandler);
+                this.main.stage.removeListener("pointerup", this.mouseUpHandler);
+                this.main.stage.removeListener("pointerupoutside", this.mouseUpHandler);
+                this.map = null;
+                _super.prototype.destroy.call(this);
+            };
+            return DragPlugin;
+        }(elec.PluginBase));
+        elec.DragPlugin = DragPlugin;
+        var DragItem = /** @class */ (function () {
+            function DragItem(eq, id, p) {
+                this.moved = false;
+                this.eq = eq;
+                this.id = id;
+                this.p = p;
+            }
+            return DragItem;
+        }());
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
 /**
  * Created by hanyeah on 2019/9/18.
  */
@@ -531,7 +563,7 @@ var hanyeah;
                 var _this = _super.call(this, main) || this;
                 _this.map = {};
                 _this.mouseDownHandler = function (e) {
-                    if (e.target === _this.main.stage) {
+                    if (e.data.button === 0 && e.target === _this.main.stage) {
                         _this.map[e.data.identifier] = e.data.global.clone();
                     }
                 };
@@ -574,10 +606,12 @@ var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
+        var Rectangle = PIXI.Rectangle;
         var SelectPlugin = /** @class */ (function (_super) {
             __extends(SelectPlugin, _super);
             function SelectPlugin(main) {
                 var _this = _super.call(this, main) || this;
+                _this.map = {};
                 _this.stageClickHandler = function (e) {
                     if (e.target instanceof elec.EqBase) {
                         _this.main.select([e.target], e.data.originalEvent.ctrlKey);
@@ -587,15 +621,68 @@ var hanyeah;
                     }
                 };
                 _this.main.stage.addListener("pointertap", _this.stageClickHandler);
+                _this.main.stage.addListener("rightdown", _this.rightDownHandler, _this);
+                _this.main.stage.addListener("rightup", _this.rightUpHandler, _this);
+                _this.main.stage.addListener("rightupoutside", _this.rightUpHandler, _this);
+                _this.main.stage.addListener("pointermove", _this.mouseMoveHandler, _this);
                 return _this;
             }
             SelectPlugin.prototype.destroy = function () {
                 this.main.stage.removeListener("pointertap", this.stageClickHandler);
+                this.main.stage.removeListener("rightdown", this.rightDownHandler, this);
+                this.main.stage.removeListener("rightup", this.rightUpHandler, this);
+                this.main.stage.removeListener("rightupoutside", this.rightUpHandler, this);
+                this.main.stage.removeListener("pointermove", this.mouseMoveHandler, this);
+                this.map = null;
                 _super.prototype.destroy.call(this);
+            };
+            SelectPlugin.prototype.rightDownHandler = function (e) {
+                if (e.target === this.main.stage) {
+                    var p = this.main.viewStack.toLocal(e.data.global);
+                    var item = new DragSelectItem(p, p.clone());
+                    this.map[e.data.identifier] = item;
+                    this.main.viewStack.assistLayer.addChild(item.gra);
+                }
+            };
+            SelectPlugin.prototype.rightUpHandler = function (e) {
+                if (this.map[e.data.identifier]) {
+                    var item = this.map[e.data.identifier];
+                    this.main.viewStack.assistLayer.removeChild(item.gra);
+                    delete this.map[e.data.identifier];
+                    e.stopPropagation();
+                }
+            };
+            SelectPlugin.prototype.mouseMoveHandler = function (e) {
+                if (this.map[e.data.identifier]) {
+                    var item = this.map[e.data.identifier];
+                    item.p1 = this.main.viewStack.toLocal(e.data.global);
+                    item.update();
+                    this.main.selectByRect(item.rect);
+                }
             };
             return SelectPlugin;
         }(elec.PluginBase));
         elec.SelectPlugin = SelectPlugin;
+        var DragSelectItem = /** @class */ (function () {
+            function DragSelectItem(p0, p1) {
+                this.p0 = p0;
+                this.p1 = p1;
+                this.gra = new PIXI.Graphics();
+                this.rect = new Rectangle();
+            }
+            DragSelectItem.prototype.update = function () {
+                this.rect.x = Math.min(this.p0.x, this.p1.x);
+                this.rect.y = Math.min(this.p0.y, this.p1.y);
+                this.rect.width = Math.abs(this.p0.x - this.p1.x);
+                this.rect.height = Math.abs(this.p0.y - this.p1.y);
+                this.gra.clear();
+                this.gra.lineStyle(1, 0x000000, 1.0);
+                this.gra.beginFill(0x000000, 0.3);
+                this.gra.drawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
+                this.gra.endFill();
+            };
+            return DragSelectItem;
+        }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -675,22 +762,6 @@ var hanyeah;
             return CommandAddEq;
         }(elec.RedoUndo));
         elec.CommandAddEq = CommandAddEq;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var SingleSwitch = /** @class */ (function (_super) {
-            __extends(SingleSwitch, _super);
-            function SingleSwitch(main) {
-                return _super.call(this, main) || this;
-            }
-            SingleSwitch.prototype.initSkin = function () {
-            };
-            return SingleSwitch;
-        }(elec.ElecEq));
-        elec.SingleSwitch = SingleSwitch;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**

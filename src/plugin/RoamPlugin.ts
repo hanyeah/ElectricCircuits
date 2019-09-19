@@ -25,7 +25,7 @@ namespace hanyeah.elec {
     }
 
     private mouseDownHandler = (e: InteractionEvent) => {
-      if (e.target === this.main.stage) {
+      if (e.data.button === 0 && e.target === this.main.stage) {
         this.map[e.data.identifier] = e.data.global.clone();
       }
     };
