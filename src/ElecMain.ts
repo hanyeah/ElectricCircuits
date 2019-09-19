@@ -1,5 +1,6 @@
 namespace hanyeah.elec {
 
+  import Point = PIXI.Point;
   export class ElecMain extends HObject {
 
     public app: PIXI.Application;
@@ -16,29 +17,16 @@ namespace hanyeah.elec {
 
     constructor(canvas: HTMLCanvasElement) {
       super();
-      console.log("ElecMain");
-      console.log(this);
-
+      (window as any).main = this;
+      // init app
       this.canvas = canvas;
       this.app = new PIXI.Application({view: canvas, transparent: true});
       this.stage = this.app.stage;
       this.stage.interactive = true;
       this.stage.hitArea = new StageHitArea();
-
+      // init viewStack
       this.viewStack = new ViewStack(this);
       this.stage.addChild(this.viewStack);
-
-      const battery: Battery = new Battery(this);
-      this.viewStack.eqLayer.addChild(battery);
-      battery.x = 500;
-      battery.y = 300;
-
-      const resistance: Resistance = new Resistance(this);
-      this.viewStack.eqLayer.addChild(resistance);
-      resistance.x = 200;
-      resistance.y = 300;
-
-      console.log(battery);
       // init ticker
       this.ticker = this.app.ticker;
       this.startTicker();
@@ -50,6 +38,9 @@ namespace hanyeah.elec {
       this.zoomPlugin = new ZoomPlugin(this);
 
       this.resized();
+
+      this.addEq("Battery", new Point(500, 300));
+      this.addEq("Resistance", new Point(200, 300));
     }
 
     destroy() {
@@ -106,6 +97,26 @@ namespace hanyeah.elec {
       }
     }
 
+    addEq(className: string, p: Point): EqBase {
+      const clazz: any = hanyeah.elec[className];
+      if (clazz) {
+        const eq: EqBase =  new clazz(this) as EqBase;
+        eq.x = p.x;
+        eq.y = p.y;
+        this.viewStack.eqLayer.addChild(eq);
+        return eq;
+      }
+      return null;
+    }
+
+    removeEq(UID: number): EqBase{
+      const eq: EqBase = this.viewStack.eqLayer.getEqByUID(UID);
+      if (eq) {
+        this.viewStack.eqLayer.removeChild(eq);
+      }
+      return eq;
+    }
+
     moveSelectBy(dx: number, dy: number) {
       for (let i: number = 0; i < this.selects.length; i++) {
         this.selects[i].moveBy(dx, dy);
@@ -128,6 +139,9 @@ namespace hanyeah.elec {
 
   }
 
+  /**
+   * stage的hitArea，永远返回true，实现舞台任意位置点击都有事件。
+   */
   class StageHitArea implements PIXI.IHitArea {
     constructor() {
       //

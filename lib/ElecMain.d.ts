@@ -14,6 +14,8 @@ declare namespace hanyeah.elec {
 }
 declare namespace hanyeah.elec {
     class EqBase extends Container {
+        private static COUNTING;
+        UID: number;
         isSelect: boolean;
         constructor(main: ElecMain);
         initSkin(): void;
@@ -62,15 +64,33 @@ declare namespace hanyeah.elec {
         destroy(): void;
     }
 }
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
 declare namespace hanyeah.elec {
-    class Wire extends Resistance {
+    class RedoUndo {
+        className: string;
+        protected main: ElecMain;
         constructor(main: ElecMain);
+        destroy(): void;
+        redo(): void;
+        undo(): void;
+        getData(): any;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
+declare namespace hanyeah.elec {
+    class HEvent extends HObject {
+        static DRAG_START: string;
+        static DRAG_MOVE: string;
+        constructor();
     }
 }
 declare namespace hanyeah.elec {
-    class SingleSwitch extends ElecEq {
+    class Wire extends Resistance {
         constructor(main: ElecMain);
-        initSkin(): void;
     }
 }
 declare namespace hanyeah.elec {
@@ -80,14 +100,17 @@ declare namespace hanyeah.elec {
     }
 }
 /**
- * Created by hanyeah on 2019/9/19.
- */
-/**
  * Created by hanyeah on 2019/9/18.
  */
 declare namespace hanyeah.elec {
     class EqLayer extends Container {
         constructor(main: ElecMain);
+        /**
+         * 根据UID获取器材。
+         * @param UID
+         * @returns {any}
+         */
+        getEqByUID(UID: number): EqBase;
     }
 }
 /**
@@ -110,6 +133,7 @@ declare namespace hanyeah.elec {
     }
 }
 declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
     class ElecMain extends HObject {
         app: PIXI.Application;
         canvas: HTMLCanvasElement;
@@ -129,6 +153,8 @@ declare namespace hanyeah.elec {
         startTicker(): void;
         stopTicker(): void;
         select(eqs: EqBase[], add: boolean): void;
+        addEq(className: string, p: Point): EqBase;
+        removeEq(UID: number): EqBase;
         moveSelectBy(dx: number, dy: number): void;
         moveStageBy(dx: number, dy: number): void;
         scaleBy(s: number, p: PIXI.Point): void;
@@ -168,5 +194,46 @@ declare namespace hanyeah.elec {
         destroy(): void;
         private mouseMoveHandler;
         private mouseWheelHandler;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    class CommandAddEq extends RedoUndo {
+        className: string;
+        private eqClassName;
+        private p;
+        private eqUID;
+        constructor(main: ElecMain, eqClassName: string, p: Point, UID: number);
+        destroy(): void;
+        redo(): void;
+        undo(): void;
+        getData(): any;
+    }
+}
+declare namespace hanyeah.elec {
+    class SingleSwitch extends ElecEq {
+        constructor(main: ElecMain);
+        initSkin(): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
+declare namespace hanyeah.elec {
+    class RedoUndoManager {
+        private undoStack;
+        private redoStack;
+        private maxStep;
+        constructor(maxStep: number);
+        addUndo(command: RedoUndo): void;
+        undo(): void;
+        redo(): void;
+        canUndo(): boolean;
+        canRedo(): boolean;
+        readonly currentUndoStep: number;
+        readonly currentRedoStep: number;
     }
 }
