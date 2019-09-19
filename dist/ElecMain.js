@@ -82,24 +82,6 @@ var hanyeah;
         elec.EqBase = EqBase;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/18.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var HObject = /** @class */ (function () {
-            function HObject() {
-                // private static TIME: number = new Date().getTime();
-                this.UID = HObject.COUNTING++;
-            }
-            HObject.COUNTING = 0;
-            return HObject;
-        }());
-        elec.HObject = HObject;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
 var hanyeah;
 (function (hanyeah) {
     var elec;
@@ -116,6 +98,24 @@ var hanyeah;
             return ElecEq;
         }(elec.EqBase));
         elec.ElecEq = ElecEq;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var HObject = /** @class */ (function () {
+            function HObject() {
+                // private static TIME: number = new Date().getTime();
+                this.UID = HObject.COUNTING++;
+            }
+            HObject.COUNTING = 0;
+            return HObject;
+        }());
+        elec.HObject = HObject;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 var hanyeah;
@@ -183,108 +183,30 @@ var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
-        var ElecMain = /** @class */ (function (_super) {
-            __extends(ElecMain, _super);
-            function ElecMain(canvas) {
-                var _this = _super.call(this) || this;
-                _this.selects = [];
-                console.log("ElecMain");
-                var app = new PIXI.Application({ view: canvas, transparent: true });
-                console.log(app);
-                console.log(app.stage);
-                _this.stage = app.stage;
-                _this.stage.interactive = true;
-                _this.stage.hitArea = new StageHitArea();
-                _this.viewStack = new elec.ViewStack(_this);
-                _this.stage.addChild(_this.viewStack);
-                var battery = new elec.Battery(_this);
-                _this.viewStack.eqLayer.addChild(battery);
-                battery.x = 500;
-                battery.y = 300;
-                var resistance = new elec.Resistance(_this);
-                _this.viewStack.eqLayer.addChild(resistance);
-                resistance.x = 200;
-                resistance.y = 300;
-                console.log(battery);
-                // init ticker
-                _this.ticker = app.ticker;
-                _this.startTicker();
-                _this.ticker.add(_this.update, _this);
-                // init plugin
-                _this.selectPlugin = new elec.SelectPlugin(_this);
-                _this.dragPlugin = new elec.DragPlugin(_this);
-                _this.roamPlugin = new elec.RoamPlugin(_this);
-                _this.resized();
-                return _this;
+        var Wire = /** @class */ (function (_super) {
+            __extends(Wire, _super);
+            function Wire(main) {
+                return _super.call(this, main) || this;
             }
-            ElecMain.prototype.destroy = function () {
-                this.selectPlugin.destroy();
-                this.dragPlugin.destroy();
-                this.roamPlugin.destroy();
-                this.stopTicker();
-                this.ticker = null;
-            };
-            ElecMain.prototype.update = function (deltaTime) {
-                var eq;
-                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
-                    eq = this.viewStack.eqLayer.children[i];
-                    eq.update(this.ticker.deltaMS);
-                }
-            };
-            ElecMain.prototype.resized = function () {
-            };
-            ElecMain.prototype.startTicker = function () {
-                if (!this.ticker.started) {
-                    this.ticker.start();
-                }
-            };
-            ElecMain.prototype.stopTicker = function () {
-                if (this.ticker.started) {
-                    this.ticker.stop();
-                }
-            };
-            ElecMain.prototype.select = function (eqs, add) {
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].isSelect = false;
-                }
-                if (!add) {
-                    this.selects.length = 0;
-                }
-                for (var i = 0; i < eqs.length; i++) {
-                    var eq = eqs[i];
-                    var ind = this.selects.indexOf(eq);
-                    if (ind === -1) {
-                        this.selects.push(eq);
-                    }
-                    else {
-                        this.selects.splice(ind, 1);
-                    }
-                }
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].isSelect = true;
-                }
-            };
-            ElecMain.prototype.moveSelectBy = function (dx, dy) {
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].moveBy(dx, dy);
-                }
-            };
-            ElecMain.prototype.moveStageBy = function (dx, dy) {
-                this.viewStack.x += dx;
-                this.viewStack.y += dy;
-            };
-            return ElecMain;
-        }(elec.HObject));
-        elec.ElecMain = ElecMain;
-        var StageHitArea = /** @class */ (function () {
-            function StageHitArea() {
-                //
+            return Wire;
+        }(elec.Resistance));
+        elec.Wire = Wire;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var SingleSwitch = /** @class */ (function (_super) {
+            __extends(SingleSwitch, _super);
+            function SingleSwitch(main) {
+                return _super.call(this, main) || this;
             }
-            StageHitArea.prototype.contains = function (x, y) {
-                return true;
+            SingleSwitch.prototype.initSkin = function () {
             };
-            return StageHitArea;
-        }());
+            return SingleSwitch;
+        }(elec.ElecEq));
+        elec.SingleSwitch = SingleSwitch;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 var hanyeah;
@@ -309,36 +231,9 @@ var hanyeah;
         elec.Battery = Battery;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var SingleSwitch = /** @class */ (function (_super) {
-            __extends(SingleSwitch, _super);
-            function SingleSwitch(main) {
-                return _super.call(this, main) || this;
-            }
-            SingleSwitch.prototype.initSkin = function () {
-            };
-            return SingleSwitch;
-        }(elec.ElecEq));
-        elec.SingleSwitch = SingleSwitch;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Wire = /** @class */ (function (_super) {
-            __extends(Wire, _super);
-            function Wire(main) {
-                return _super.call(this, main) || this;
-            }
-            return Wire;
-        }(elec.Resistance));
-        elec.Wire = Wire;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/19.
+ */
 /**
  * Created by hanyeah on 2019/9/18.
  */
@@ -442,6 +337,130 @@ var hanyeah;
         }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var ElecMain = /** @class */ (function (_super) {
+            __extends(ElecMain, _super);
+            function ElecMain(canvas) {
+                var _this = _super.call(this) || this;
+                _this.selects = [];
+                console.log("ElecMain");
+                console.log(_this);
+                _this.canvas = canvas;
+                _this.app = new PIXI.Application({ view: canvas, transparent: true });
+                _this.stage = _this.app.stage;
+                _this.stage.interactive = true;
+                _this.stage.hitArea = new StageHitArea();
+                _this.viewStack = new elec.ViewStack(_this);
+                _this.stage.addChild(_this.viewStack);
+                var battery = new elec.Battery(_this);
+                _this.viewStack.eqLayer.addChild(battery);
+                battery.x = 500;
+                battery.y = 300;
+                var resistance = new elec.Resistance(_this);
+                _this.viewStack.eqLayer.addChild(resistance);
+                resistance.x = 200;
+                resistance.y = 300;
+                console.log(battery);
+                // init ticker
+                _this.ticker = _this.app.ticker;
+                _this.startTicker();
+                _this.ticker.add(_this.update, _this);
+                // init plugin
+                _this.selectPlugin = new elec.SelectPlugin(_this);
+                _this.dragPlugin = new elec.DragPlugin(_this);
+                _this.roamPlugin = new elec.RoamPlugin(_this);
+                _this.zoomPlugin = new elec.ZoomPlugin(_this);
+                _this.resized();
+                var gra = new PIXI.Graphics();
+                gra.beginFill(0xff0000);
+                gra.drawCircle(0, 0, 10);
+                gra.endFill();
+                _this.viewStack.eqLayer.addChild(gra);
+                gra.update = function () { };
+                return _this;
+            }
+            ElecMain.prototype.destroy = function () {
+                this.selectPlugin.destroy();
+                this.dragPlugin.destroy();
+                this.roamPlugin.destroy();
+                this.zoomPlugin.destroy();
+                this.stopTicker();
+                this.ticker = null;
+            };
+            ElecMain.prototype.update = function (deltaTime) {
+                var eq;
+                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
+                    eq = this.viewStack.eqLayer.children[i];
+                    eq.update(this.ticker.deltaMS);
+                }
+            };
+            ElecMain.prototype.resized = function () {
+            };
+            ElecMain.prototype.startTicker = function () {
+                if (!this.ticker.started) {
+                    this.ticker.start();
+                }
+            };
+            ElecMain.prototype.stopTicker = function () {
+                if (this.ticker.started) {
+                    this.ticker.stop();
+                }
+            };
+            ElecMain.prototype.select = function (eqs, add) {
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].isSelect = false;
+                }
+                if (!add) {
+                    this.selects.length = 0;
+                }
+                for (var i = 0; i < eqs.length; i++) {
+                    var eq = eqs[i];
+                    var ind = this.selects.indexOf(eq);
+                    if (ind === -1) {
+                        this.selects.push(eq);
+                    }
+                    else {
+                        this.selects.splice(ind, 1);
+                    }
+                }
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].isSelect = true;
+                }
+            };
+            ElecMain.prototype.moveSelectBy = function (dx, dy) {
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].moveBy(dx, dy);
+                }
+            };
+            ElecMain.prototype.moveStageBy = function (dx, dy) {
+                this.viewStack.x += dx;
+                this.viewStack.y += dy;
+            };
+            ElecMain.prototype.scaleBy = function (s, p) {
+                var s0 = this.viewStack.scale.x;
+                var s1 = s0 * s;
+                this.viewStack.scale.x = s1;
+                this.viewStack.scale.y = s1;
+                this.viewStack.x += p.x * (1 - s) * s0;
+                this.viewStack.y += p.y * (1 - s) * s0;
+            };
+            return ElecMain;
+        }(elec.HObject));
+        elec.ElecMain = ElecMain;
+        var StageHitArea = /** @class */ (function () {
+            function StageHitArea() {
+                //
+            }
+            StageHitArea.prototype.contains = function (x, y) {
+                return true;
+            };
+            return StageHitArea;
+        }());
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
 /**
  * Created by hanyeah on 2019/9/18.
  */
@@ -520,5 +539,40 @@ var hanyeah;
             return SelectPlugin;
         }(elec.PluginBase));
         elec.SelectPlugin = SelectPlugin;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Point = PIXI.Point;
+        var ZoomPlugin = /** @class */ (function (_super) {
+            __extends(ZoomPlugin, _super);
+            function ZoomPlugin(main) {
+                var _this = _super.call(this, main) || this;
+                _this.map = {};
+                _this.mouseP = new Point();
+                _this.mouseMoveHandler = function (e) {
+                    _this.mouseP = e.data.global.clone();
+                };
+                _this.mouseWheelHandler = function (e) {
+                    var delta = e.wheelDelta ? (e.wheelDelta / 120) : (-e.detail / 3);
+                    var p = _this.main.viewStack.toLocal(_this.mouseP);
+                    var s = Math.min(Math.max(1 + delta * 0.1, 0.1), 2);
+                    _this.main.scaleBy(s, p);
+                };
+                _this.main.canvas.addEventListener("mousewheel", _this.mouseWheelHandler);
+                _this.main.stage.addListener("pointermove", _this.mouseMoveHandler);
+                return _this;
+            }
+            ZoomPlugin.prototype.destroy = function () {
+                _super.prototype.destroy.call(this);
+            };
+            return ZoomPlugin;
+        }(elec.PluginBase));
+        elec.ZoomPlugin = ZoomPlugin;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));

@@ -2,23 +2,26 @@ namespace hanyeah.elec {
 
   export class ElecMain extends HObject {
 
+    public app: PIXI.Application;
+    public canvas: HTMLCanvasElement;
     public stage: PIXI.Container;
     public bg: PIXI.Graphics;
     public viewStack: ViewStack;
     private selectPlugin: SelectPlugin;
     private dragPlugin: DragPlugin;
     private roamPlugin: RoamPlugin;
+    private zoomPlugin: ZoomPlugin;
     private selects: EqBase[] = [];
     private ticker: PIXI.ticker.Ticker;
 
     constructor(canvas: HTMLCanvasElement) {
       super();
       console.log("ElecMain");
+      console.log(this);
 
-      const app: PIXI.Application = new PIXI.Application({view: canvas, transparent: true});
-      console.log(app);
-      console.log(app.stage);
-      this.stage = app.stage;
+      this.canvas = canvas;
+      this.app = new PIXI.Application({view: canvas, transparent: true});
+      this.stage = this.app.stage;
       this.stage.interactive = true;
       this.stage.hitArea = new StageHitArea();
 
@@ -37,13 +40,14 @@ namespace hanyeah.elec {
 
       console.log(battery);
       // init ticker
-      this.ticker = app.ticker;
+      this.ticker = this.app.ticker;
       this.startTicker();
       this.ticker.add(this.update, this);
       // init plugin
       this.selectPlugin = new SelectPlugin(this);
       this.dragPlugin = new DragPlugin(this);
       this.roamPlugin = new RoamPlugin(this);
+      this.zoomPlugin = new ZoomPlugin(this);
 
       this.resized();
     }
@@ -52,6 +56,7 @@ namespace hanyeah.elec {
       this.selectPlugin.destroy();
       this.dragPlugin.destroy();
       this.roamPlugin.destroy();
+      this.zoomPlugin.destroy();
       this.stopTicker();
       this.ticker = null;
     }
@@ -110,6 +115,15 @@ namespace hanyeah.elec {
     moveStageBy(dx: number, dy: number) {
       this.viewStack.x += dx;
       this.viewStack.y += dy;
+    }
+
+    scaleBy(s: number, p: PIXI.Point) {
+      const s0: number = this.viewStack.scale.x;
+      const s1: number = s0 * s;
+      this.viewStack.scale.x = s1;
+      this.viewStack.scale.y = s1;
+      this.viewStack.x += p.x * (1 - s) * s0;
+      this.viewStack.y += p.y * (1 - s) * s0;
     }
 
   }
