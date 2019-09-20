@@ -97,6 +97,13 @@ var hanyeah;
                 _this.R = 0;
                 return _this;
             }
+            ElecEq.prototype.addTerminal = function (x, y) {
+                var terminal = new elec.Terminal();
+                terminal.x = x;
+                terminal.y = y;
+                this.addChild(terminal);
+                return terminal;
+            };
             return ElecEq;
         }(elec.EqBase));
         elec.ElecEq = ElecEq;
@@ -143,7 +150,10 @@ var hanyeah;
         var Resistance = /** @class */ (function (_super) {
             __extends(Resistance, _super);
             function Resistance(main) {
-                return _super.call(this, main) || this;
+                var _this = _super.call(this, main) || this;
+                _this.terminal0 = _this.addTerminal(-50, 0);
+                _this.terminal1 = _this.addTerminal(50, 0);
+                return _this;
             }
             Resistance.prototype.initSkin = function () {
                 var gra = new PIXI.Graphics();
@@ -172,12 +182,14 @@ var hanyeah;
             function PluginBase(main) {
                 var _this = _super.call(this) || this;
                 _this.mouseP = new Point();
+                _this.map = {};
                 _this.main = main;
                 return _this;
             }
             PluginBase.prototype.destroy = function () {
                 this.main = null;
                 this.mouseP = null;
+                this.map = null;
             };
             /**
              * 鼠标左键按下
@@ -302,11 +314,102 @@ var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
+        var Battery = /** @class */ (function (_super) {
+            __extends(Battery, _super);
+            function Battery(main) {
+                var _this = _super.call(this, main) || this;
+                _this.terminal0 = _this.addTerminal(-50, 0);
+                _this.terminal1 = _this.addTerminal(50, 0);
+                return _this;
+            }
+            Battery.prototype.initSkin = function () {
+                var gra = new PIXI.Graphics();
+                gra.beginFill(0x000000, 1.0);
+                gra.drawRect(-50, -20, 100, 40);
+                gra.drawRect(50, -5, 4, 10);
+                gra.endFill();
+                this.addChild(gra);
+            };
+            return Battery;
+        }(elec.VoltageSource));
+        elec.Battery = Battery;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Graphics = PIXI.Graphics;
+        var SingleSwitch = /** @class */ (function (_super) {
+            __extends(SingleSwitch, _super);
+            function SingleSwitch(main) {
+                var _this = _super.call(this, main) || this;
+                _this.terminal0 = _this.addTerminal(-50, 0);
+                _this.terminal1 = _this.addTerminal(50, 0);
+                return _this;
+            }
+            SingleSwitch.prototype.initSkin = function () {
+                var gra = new Graphics();
+                gra.beginFill(0x000000, 1.0);
+                gra.drawRect(-50, 0, 100, 20);
+                gra.drawRect(-50, -20, 10, 20);
+                gra.drawRect(50, -20, -10, 20);
+                gra.endFill();
+                this.addChild(gra);
+                var knife = new Graphics();
+                knife.beginFill(0x000000, 1.0);
+                knife.drawRect(-5, -10, 100, 20);
+                this.addChild(knife);
+                knife.x = -45;
+                knife.y = -5;
+                knife.rotation = -10 * Math.PI / 180;
+                this.knife = knife;
+            };
+            return SingleSwitch;
+        }(elec.ElecEq));
+        elec.SingleSwitch = SingleSwitch;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Point = PIXI.Point;
+        var Graphics = PIXI.Graphics;
         var Wire = /** @class */ (function (_super) {
             __extends(Wire, _super);
             function Wire(main) {
-                return _super.call(this, main) || this;
+                var _this = _super.call(this, main) || this;
+                _this.vertexs = [];
+                _this.vertexs.push(new Point(-50, 0), new Point(50, 0));
+                return _this;
             }
+            Wire.prototype.update = function (dt) {
+                _super.prototype.update.call(this, dt);
+                this.updateSkin();
+            };
+            Wire.prototype.initSkin = function () {
+                this.skin = new Graphics();
+                this.addChild(this.skin);
+            };
+            Wire.prototype.updateSkin = function () {
+                var gra = this.skin;
+                gra.clear();
+                gra.lineStyle(6, 0x000000, 1.0);
+                var p;
+                for (var i = 0; i < this.vertexs.length; i++) {
+                    p = this.vertexs[i];
+                    if (i === 0) {
+                        gra.moveTo(p.x, p.y);
+                    }
+                    else {
+                        gra.lineTo(p.x, p.y);
+                    }
+                }
+            };
+            Wire.prototype.moveBy = function (dx, dy) {
+                _super.prototype.moveBy.call(this, dx, dy);
+            };
             return Wire;
         }(elec.Resistance));
         elec.Wire = Wire;
@@ -329,28 +432,6 @@ var hanyeah;
             return HEvent;
         }(elec.HObject));
         elec.HEvent = HEvent;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Battery = /** @class */ (function (_super) {
-            __extends(Battery, _super);
-            function Battery(main) {
-                return _super.call(this, main) || this;
-            }
-            Battery.prototype.initSkin = function () {
-                var gra = new PIXI.Graphics();
-                gra.beginFill(0x000000, 1.0);
-                gra.drawRect(-50, -20, 100, 40);
-                gra.drawRect(50, -5, 4, 10);
-                gra.endFill();
-                this.addChild(gra);
-            };
-            return Battery;
-        }(elec.VoltageSource));
-        elec.Battery = Battery;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -383,12 +464,9 @@ var hanyeah;
         var DragPlugin = /** @class */ (function (_super) {
             __extends(DragPlugin, _super);
             function DragPlugin(main) {
-                var _this = _super.call(this, main) || this;
-                _this.map = {};
-                return _this;
+                return _super.call(this, main) || this;
             }
             DragPlugin.prototype.destroy = function () {
-                this.map = null;
                 _super.prototype.destroy.call(this);
             };
             DragPlugin.prototype.onMouseDown = function (e) {
@@ -434,11 +512,82 @@ var hanyeah;
         }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
 var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
         var Point = PIXI.Point;
+        var DrawWirePlugin = /** @class */ (function (_super) {
+            __extends(DrawWirePlugin, _super);
+            function DrawWirePlugin(main) {
+                return _super.call(this, main) || this;
+            }
+            DrawWirePlugin.prototype.destroy = function () {
+                _super.prototype.destroy.call(this);
+            };
+            DrawWirePlugin.prototype.onMouseDown = function (e) {
+                _super.prototype.onMouseDown.call(this, e);
+                if (e.target instanceof elec.Terminal) {
+                    var p = this.global2view(e.data.global);
+                    var wire = this.main.addEq("Wire", new Point());
+                    this.map[e.data.identifier] = wire;
+                    wire.vertexs[0] = p;
+                    wire.vertexs[1] = p.clone();
+                    wire.interactive = false;
+                }
+            };
+            DrawWirePlugin.prototype.onMouseMove = function (e) {
+                _super.prototype.onMouseMove.call(this, e);
+                if (this.map[e.data.identifier]) {
+                    var wire = this.map[e.data.identifier];
+                    var p = this.global2view(e.data.global);
+                    wire.vertexs[1] = p;
+                }
+            };
+            DrawWirePlugin.prototype.onMouseUp = function (e) {
+                _super.prototype.onMouseUp.call(this, e);
+                if (this.map[e.data.identifier]) {
+                    var wire = this.map[e.data.identifier];
+                    var p = this.global2view(e.data.global);
+                    if (e.target instanceof elec.Terminal) {
+                        wire.interactive = true;
+                    }
+                    else {
+                        this.main.removeEq(wire);
+                    }
+                }
+            };
+            return DrawWirePlugin;
+        }(elec.PluginBase));
+        elec.DrawWirePlugin = DrawWirePlugin;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var HotkeyPlugin = /** @class */ (function (_super) {
+            __extends(HotkeyPlugin, _super);
+            function HotkeyPlugin(main) {
+                return _super.call(this, main) || this;
+            }
+            return HotkeyPlugin;
+        }(elec.PluginBase));
+        elec.HotkeyPlugin = HotkeyPlugin;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Point = PIXI.Point;
+        var Rectangle = PIXI.Rectangle;
         var ElecMain = /** @class */ (function (_super) {
             __extends(ElecMain, _super);
             function ElecMain(canvas) {
@@ -464,9 +613,13 @@ var hanyeah;
                 _this.pluginManager.registerPlugin(new elec.SelectPlugin(_this));
                 _this.pluginManager.registerPlugin(new elec.RoamPlugin(_this));
                 _this.pluginManager.registerPlugin(new elec.ZoomPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.HotkeyPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.DrawWirePlugin(_this));
                 _this.resized();
                 _this.addEq("Battery", new Point(500, 300));
                 _this.addEq("Resistance", new Point(200, 300));
+                _this.addEq("SingleSwitch", new Point(200, 400));
+                _this.addEq("Wire", new Point(500, 400));
                 return _this;
             }
             ElecMain.prototype.destroy = function () {
@@ -525,12 +678,12 @@ var hanyeah;
                 }
                 return null;
             };
-            ElecMain.prototype.removeEq = function (UID) {
-                var eq = this.viewStack.eqLayer.getEqByUID(UID);
-                if (eq) {
-                    this.viewStack.eqLayer.removeChild(eq);
-                }
-                return eq;
+            ElecMain.prototype.removeEq = function (eq) {
+                this.viewStack.eqLayer.removeChild(eq);
+                eq.destroy();
+            };
+            ElecMain.prototype.getEq = function (UID) {
+                return this.viewStack.eqLayer.getEqByUID(UID);
             };
             ElecMain.prototype.moveSelectBy = function (dx, dy) {
                 for (var i = 0; i < this.selects.length; i++) {
@@ -550,19 +703,31 @@ var hanyeah;
                 this.viewStack.y += p.y * (1 - s) * s0;
             };
             ElecMain.prototype.selectByRect = function (rect) {
-                var eq;
-                // const rect0: Rectangle;
+                var sc = this.getScale();
+                var rect0 = new Rectangle();
+                var rect1 = new Rectangle(rect.x * sc + this.viewStack.x, rect.y * sc + this.viewStack.y, rect.width * sc, rect.height * sc);
                 var arr = [];
-                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
-                    eq = this.viewStack.eqLayer.children[i];
-                    // if (eq.getBounds(true, rect0).) {
-                    //
-                    // }
-                    if (rect.contains(eq.x, eq.y)) {
+                this.forEachEq(function (eq) {
+                    if (elec.RectangleUtil.intersects(rect1, eq.getBounds(true, rect0), false)) {
                         arr.push(eq);
                     }
-                }
+                });
                 this.select(arr, false);
+            };
+            ElecMain.prototype.selectAll = function () {
+                var arr = [];
+                this.forEachEq(function (eq) {
+                    arr.push(eq);
+                });
+                this.select(arr, false);
+            };
+            ElecMain.prototype.forEachEq = function (callBack) {
+                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
+                    callBack(this.viewStack.eqLayer.children[i]);
+                }
+            };
+            ElecMain.prototype.getScale = function () {
+                return this.viewStack.scale.x;
             };
             ElecMain.prototype.global2view = function (p) {
                 return this.viewStack.toLocal(p);
@@ -593,7 +758,13 @@ var hanyeah;
     (function (elec) {
         var PluginManager = /** @class */ (function () {
             function PluginManager(main) {
+                var _this = this;
                 this.plugins = [];
+                this.mouseWheelHandler = function (e) {
+                    _this.plugins.forEach(function (plugin) {
+                        plugin.onMouseWheel(e);
+                    });
+                };
                 this.main = main;
                 this.main.stage.addListener("pointerdown", this.mouseDownHandler, this);
                 this.main.stage.addListener("pointermove", this.mouseMoveHandler, this);
@@ -655,11 +826,6 @@ var hanyeah;
                     }
                 });
             };
-            PluginManager.prototype.mouseWheelHandler = function (e) {
-                this.plugins.forEach(function (plugin) {
-                    plugin.onMouseWheel(e);
-                });
-            };
             PluginManager.prototype.clickHandler = function (e) {
                 this.plugins.forEach(function (plugin) {
                     if (e.data.button === 0) {
@@ -685,12 +851,9 @@ var hanyeah;
         var RoamPlugin = /** @class */ (function (_super) {
             __extends(RoamPlugin, _super);
             function RoamPlugin(main) {
-                var _this = _super.call(this, main) || this;
-                _this.map = {};
-                return _this;
+                return _super.call(this, main) || this;
             }
             RoamPlugin.prototype.destroy = function () {
-                this.map = null;
                 _super.prototype.destroy.call(this);
             };
             RoamPlugin.prototype.onMouseDown = function (e) {
@@ -731,12 +894,9 @@ var hanyeah;
         var SelectPlugin = /** @class */ (function (_super) {
             __extends(SelectPlugin, _super);
             function SelectPlugin(main) {
-                var _this = _super.call(this, main) || this;
-                _this.map = {};
-                return _this;
+                return _super.call(this, main) || this;
             }
             SelectPlugin.prototype.destroy = function () {
-                this.map = null;
                 _super.prototype.destroy.call(this);
             };
             SelectPlugin.prototype.onClick = function (e) {
@@ -763,7 +923,9 @@ var hanyeah;
                     var item = this.map[e.data.identifier];
                     this.main.viewStack.assistLayer.removeChild(item.gra);
                     delete this.map[e.data.identifier];
-                    e.stopPropagation();
+                    if (item.moved) {
+                        e.stopPropagation();
+                    }
                 }
             };
             SelectPlugin.prototype.onMouseMove = function (e) {
@@ -773,6 +935,7 @@ var hanyeah;
                     item.p1 = this.global2view(e.data.global);
                     item.update();
                     this.main.selectByRect(item.rect);
+                    item.moved = true;
                 }
             };
             return SelectPlugin;
@@ -780,6 +943,7 @@ var hanyeah;
         elec.SelectPlugin = SelectPlugin;
         var DragSelectItem = /** @class */ (function () {
             function DragSelectItem(p0, p1) {
+                this.moved = false;
                 this.p0 = p0;
                 this.p1 = p1;
                 this.gra = new PIXI.Graphics();
@@ -854,7 +1018,10 @@ var hanyeah;
                 eq.UID = this.eqUID;
             };
             CommandAddEq.prototype.undo = function () {
-                this.main.removeEq(this.eqUID);
+                var eq = this.main.getEq(this.eqUID);
+                if (eq) {
+                    this.main.removeEq(eq);
+                }
             };
             CommandAddEq.prototype.getData = function () {
                 var obj = _super.prototype.getData.call(this);
@@ -871,20 +1038,33 @@ var hanyeah;
         elec.CommandAddEq = CommandAddEq;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
 var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
-        var SingleSwitch = /** @class */ (function (_super) {
-            __extends(SingleSwitch, _super);
-            function SingleSwitch(main) {
-                return _super.call(this, main) || this;
+        var Terminal = /** @class */ (function (_super) {
+            __extends(Terminal, _super);
+            function Terminal() {
+                var _this = _super.call(this) || this;
+                _this.interactive = true;
+                _this.hitArea = new TerminalHItArea();
+                return _this;
             }
-            SingleSwitch.prototype.initSkin = function () {
+            return Terminal;
+        }(PIXI.DisplayObject));
+        elec.Terminal = Terminal;
+        var TerminalHItArea = /** @class */ (function () {
+            function TerminalHItArea() {
+                this.r = 10;
+            }
+            TerminalHItArea.prototype.contains = function (x, y) {
+                return x * x + y * y < this.r * this.r;
             };
-            return SingleSwitch;
-        }(elec.ElecEq));
-        elec.SingleSwitch = SingleSwitch;
+            return TerminalHItArea;
+        }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -944,5 +1124,115 @@ var hanyeah;
             return RedoUndoManager;
         }());
         elec.RedoUndoManager = RedoUndoManager;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Rectangle = PIXI.Rectangle;
+        var RectangleUtil = /** @class */ (function () {
+            function RectangleUtil() {
+            }
+            RectangleUtil.isEmpty = function (rect) {
+                return rect.width === 0 || rect.height === 0;
+            };
+            RectangleUtil.normalize = function (rect) {
+                if (rect.width < 0) {
+                    rect.x += rect.width;
+                    rect.width = -rect.width;
+                }
+                if (rect.height < 0) {
+                    rect.y += rect.height;
+                    rect.height = -rect.height;
+                }
+            };
+            /**
+             * 通过填充两个矩形之间的水平和垂直空间，将这两个矩形组合在一起以创建一个新的 Rectangle 对象。
+             * @param toUnion  Rectangle
+             * @returns {Rectangle}
+             */
+            RectangleUtil.union = function (rect0, rect1) {
+                var leftX = Math.min(rect0.x, rect1.x);
+                var leftY = Math.min(rect0.y, rect1.y);
+                var newW = Math.max(rect0.x + rect0.width, rect1.x + rect1.width) - leftX;
+                var newH = Math.max(rect0.y + rect0.height, rect1.y + rect1.height) - leftY;
+                return new Rectangle(leftX, leftY, newW, newH);
+                // const x0: number = rect0.x + rect0.width;
+                // const x1: number = rect1.x + rect1.width;
+                // const y0: number = rect0.y + rect0.height;
+                // const y1: number = rect1.y + rect1.height;
+                // const maxX: number = Math.max(rect0.x, rect1.x, x0, x1);
+                // const minX: number = Math.min(rect0.x, rect1.x, x0, x1);
+                // const maxY: number = Math.max(rect0.y, rect1.y, y0, y1);
+                // const minY: number = Math.min(rect0.y, rect1.y, y0, y1);
+                // return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+            };
+            /**
+             * 按指定量增加 Rectangle 对象的大小（以像素为单位）。
+             * @param dx
+             * @param dy
+             */
+            RectangleUtil.inflate = function (rect0, dx, dy) {
+                rect0.x -= dx;
+                rect0.width += 2 * dx;
+                rect0.y -= dy;
+                rect0.height += 2 * dy;
+            };
+            RectangleUtil.containsPoint = function (rect, point) {
+                return rect.contains(point.x, point.y);
+            };
+            /**
+             * 确定在 toIntersect 参数中指定的对象是否与此 Rectangle 对象相交。
+             * 此方法检查指定的 Rectangle 对象的 x、y、width 和 height 属性，以查看它是否与此 Rectangle 对象相交。
+             * @param toIntersect Rectangle
+             * @param notEdge 设置只挨着边的不算相交(默认算相交)
+             * @returns {boolean}
+             */
+            RectangleUtil.intersects = function (rect0, rect1, notEdge) {
+                if (notEdge) {
+                    return !(rect1.left >= rect0.right ||
+                        rect1.right <= rect0.left ||
+                        rect1.top >= rect0.bottom ||
+                        rect1.bottom <= rect0.top);
+                }
+                else {
+                    return !(rect1.left > rect0.right ||
+                        rect1.right < rect0.left ||
+                        rect1.top > rect0.bottom ||
+                        rect1.bottom < rect0.top);
+                }
+            };
+            /**
+             * 如果在 toIntersect 参数中指定的 Rectangle 对象与此 Rectangle 对象相交，
+             * 则返回交集区域作为 Rectangle 对象。
+             * 如果矩形不相交，则此方法返回一个空的 Rectangle 对象，其属性设置为 0。
+             * @param toIntersect  Rectangle
+             * @param notEdge 设置只挨着边的不算相交(默认算相交)
+             * @returns {Rectangle}
+             */
+            RectangleUtil.intersection = function (rect0, rect1, notEdge) {
+                var rect = new Rectangle();
+                if (RectangleUtil.intersects(rect0, rect1, notEdge)) {
+                    if (rect1.left <= rect0.right) {
+                        rect.x = rect1.left;
+                        rect.width = rect0.right - rect.x;
+                    }
+                    else {
+                        rect.x = rect0.left;
+                        rect.width = rect1.right - rect.x;
+                    }
+                    rect.y = (rect1.top < rect0.top) ? rect0.top : rect1.top;
+                    rect.height = (rect1.bottom < rect0.bottom) ? rect1.bottom : rect0.bottom;
+                    rect.height = rect.height - rect.y;
+                }
+                return rect;
+            };
+            return RectangleUtil;
+        }());
+        elec.RectangleUtil = RectangleUtil;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));

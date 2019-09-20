@@ -27,7 +27,10 @@ namespace hanyeah.elec{
     }
 
     undo() {
-      this.main.removeEq(this.eqUID);
+      const eq: EqBase = this.main.getEq(this.eqUID);
+      if (eq) {
+        this.main.removeEq(eq);
+      }
     }
 
     getData(): any {

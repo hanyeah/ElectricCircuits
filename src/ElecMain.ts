@@ -37,20 +37,23 @@ namespace hanyeah.elec {
       this.pluginManager.registerPlugin(new RoamPlugin(this));
       this.pluginManager.registerPlugin(new ZoomPlugin(this));
       this.pluginManager.registerPlugin(new HotkeyPlugin(this));
+      this.pluginManager.registerPlugin(new DrawWirePlugin(this));
 
       this.resized();
 
       this.addEq("Battery", new Point(500, 300));
       this.addEq("Resistance", new Point(200, 300));
+      this.addEq("SingleSwitch", new Point(200, 400));
+      this.addEq("Wire", new Point(500, 400));
     }
 
-    destroy() {
+    public destroy() {
       this.pluginManager.destroy();
       this.stopTicker();
       this.ticker = null;
     }
 
-    update(deltaTime) {
+    public update(deltaTime) {
       let eq: EqBase;
       for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
         eq = this.viewStack.eqLayer.children[i] as EqBase;
@@ -58,23 +61,23 @@ namespace hanyeah.elec {
       }
     }
 
-    resized() {
+    public resized() {
 
     }
 
-    startTicker() {
+    public startTicker() {
       if (!this.ticker.started) {
         this.ticker.start();
       }
     }
 
-    stopTicker() {
+    public stopTicker() {
       if (this.ticker.started) {
         this.ticker.stop();
       }
     }
 
-    select(eqs: EqBase[], add: boolean) {
+    public select(eqs: EqBase[], add: boolean) {
       for (let i: number = 0; i < this.selects.length; i++) {
         this.selects[i].isSelect = false;
       }
@@ -95,7 +98,7 @@ namespace hanyeah.elec {
       }
     }
 
-    addEq(className: string, p: Point): EqBase {
+    public addEq(className: string, p: Point): EqBase {
       const clazz: any = hanyeah.elec[className];
       if (clazz) {
         const eq: EqBase =  new clazz(this) as EqBase;
@@ -107,26 +110,27 @@ namespace hanyeah.elec {
       return null;
     }
 
-    removeEq(UID: number): EqBase{
-      const eq: EqBase = this.viewStack.eqLayer.getEqByUID(UID);
-      if (eq) {
-        this.viewStack.eqLayer.removeChild(eq);
-      }
-      return eq;
+    public removeEq(eq: EqBase): void{
+      this.viewStack.eqLayer.removeChild(eq);
+      eq.destroy();
     }
 
-    moveSelectBy(dx: number, dy: number) {
+    public getEq(UID: number): EqBase{
+      return this.viewStack.eqLayer.getEqByUID(UID);
+    }
+
+    public moveSelectBy(dx: number, dy: number) {
       for (let i: number = 0; i < this.selects.length; i++) {
         this.selects[i].moveBy(dx, dy);
       }
     }
 
-    moveStageBy(dx: number, dy: number) {
+    public moveStageBy(dx: number, dy: number) {
       this.viewStack.x += dx;
       this.viewStack.y += dy;
     }
 
-    scaleBy(s: number, p: Point) {
+    public scaleBy(s: number, p: Point) {
       const s0: number = this.viewStack.scale.x;
       const s1: number = s0 * s;
       this.viewStack.scale.x = s1;
@@ -135,20 +139,35 @@ namespace hanyeah.elec {
       this.viewStack.y += p.y * (1 - s) * s0;
     }
 
-    selectByRect(rect: Rectangle){
-      let eq: EqBase;
-      // const rect0: Rectangle;
+    public selectByRect(rect: Rectangle){
+      const sc: number = this.getScale();
+      const rect0: Rectangle = new Rectangle();
+      const rect1: Rectangle = new Rectangle(rect.x * sc + this.viewStack.x, rect.y * sc + this.viewStack.y, rect.width * sc, rect.height * sc);
       const arr: EqBase[] = [];
-      for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
-        eq = this.viewStack.eqLayer.children[i] as EqBase;
-        // if (eq.getBounds(true, rect0).) {
-        //
-        // }
-        if(rect.contains(eq.x, eq.y)){
+      this.forEachEq((eq: EqBase) => {
+        if (RectangleUtil.intersects(rect1, eq.getBounds(true, rect0), false)) {
           arr.push(eq);
         }
-      }
+      });
       this.select(arr, false);
+    }
+
+    public selectAll() {
+      const arr: EqBase[] = [];
+      this.forEachEq((eq: EqBase) => {
+        arr.push(eq);
+      });
+      this.select(arr, false);
+    }
+
+    public forEachEq(callBack) {
+      for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
+        callBack(this.viewStack.eqLayer.children[i] as EqBase);
+      }
+    }
+
+    public getScale(): number {
+      return this.viewStack.scale.x;
     }
 
     public global2view(p: Point): Point {

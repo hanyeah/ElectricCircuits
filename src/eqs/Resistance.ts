@@ -1,7 +1,11 @@
 namespace hanyeah.elec {
-  export class Resistance extends ElecEq {
+  export class Resistance extends ElecEq implements ITwoTerminal{
+    public terminal0: Terminal;
+    public terminal1: Terminal;
     constructor(main: ElecMain) {
       super(main);
+      this.terminal0 = this.addTerminal(-50, 0);
+      this.terminal1 = this.addTerminal(50, 0);
     }
 
     initSkin() {

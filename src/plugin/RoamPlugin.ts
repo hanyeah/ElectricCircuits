@@ -6,14 +6,12 @@ namespace hanyeah.elec {
   import InteractionEvent = PIXI.interaction.InteractionEvent;
 
   export class RoamPlugin extends PluginBase {
-    private map: object = {};
 
     constructor(main: ElecMain) {
       super(main);
     }
 
     destroy() {
-      this.map = null;
       super.destroy();
     }
 

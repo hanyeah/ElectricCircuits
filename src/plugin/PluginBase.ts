@@ -7,6 +7,7 @@ namespace hanyeah.elec{
   export class PluginBase extends HObject{
     public main: ElecMain;
     public mouseP: Point = new Point();
+    protected map: object = {};
     constructor(main: ElecMain) {
       super();
       this.main = main;
@@ -15,6 +16,7 @@ namespace hanyeah.elec{
     public destroy() {
       this.main = null;
       this.mouseP = null;
+      this.map = null;
     }
 
     /**

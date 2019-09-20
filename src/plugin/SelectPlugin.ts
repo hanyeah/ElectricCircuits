@@ -9,14 +9,11 @@ namespace hanyeah.elec {
 
   export class SelectPlugin extends PluginBase {
 
-    private map: object = {};
-
     constructor(main: ElecMain) {
       super(main);
     }
 
     destroy() {
-      this.map = null;
       super.destroy();
     }
 

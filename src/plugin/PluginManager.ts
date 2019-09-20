@@ -73,11 +73,11 @@ namespace hanyeah.elec{
       });
     }
 
-    private mouseWheelHandler(e: MouseWheelEvent) {
+    private mouseWheelHandler = (e: MouseWheelEvent) => {
       this.plugins.forEach((plugin: PluginBase) => {
         plugin.onMouseWheel(e);
       });
-    }
+    };
 
     private clickHandler(e: InteractionEvent) {
       this.plugins.forEach((plugin: PluginBase) => {

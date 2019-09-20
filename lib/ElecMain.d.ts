@@ -30,6 +30,7 @@ declare namespace hanyeah.elec {
         I: number;
         R: number;
         constructor(main: ElecMain);
+        addTerminal(x: number, y: number): Terminal;
     }
 }
 /**
@@ -49,7 +50,9 @@ declare namespace hanyeah.elec {
     }
 }
 declare namespace hanyeah.elec {
-    class Resistance extends ElecEq {
+    class Resistance extends ElecEq implements ITwoTerminal {
+        terminal0: Terminal;
+        terminal1: Terminal;
         constructor(main: ElecMain);
         initSkin(): void;
     }
@@ -63,6 +66,7 @@ declare namespace hanyeah.elec {
     class PluginBase extends HObject {
         main: ElecMain;
         mouseP: Point;
+        protected map: object;
         constructor(main: ElecMain);
         destroy(): void;
         /**
@@ -137,8 +141,41 @@ declare namespace hanyeah.elec {
     }
 }
 declare namespace hanyeah.elec {
-    class Wire extends Resistance {
+    class Battery extends VoltageSource implements ITwoTerminal {
+        terminal0: Terminal;
+        terminal1: Terminal;
         constructor(main: ElecMain);
+        initSkin(): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+declare namespace hanyeah.elec {
+    interface IThreeTerminal extends ITwoTerminal {
+        terminal2: Terminal;
+    }
+}
+declare namespace hanyeah.elec {
+    import Graphics = PIXI.Graphics;
+    class SingleSwitch extends ElecEq implements ITwoTerminal {
+        terminal0: Terminal;
+        terminal1: Terminal;
+        knife: Graphics;
+        constructor(main: ElecMain);
+        initSkin(): void;
+    }
+}
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    class Wire extends Resistance {
+        vertexs: Point[];
+        private skin;
+        constructor(main: ElecMain);
+        update(dt: number): void;
+        initSkin(): void;
+        updateSkin(): void;
+        moveBy(dx: number, dy: number): void;
     }
 }
 /**
@@ -151,10 +188,13 @@ declare namespace hanyeah.elec {
         constructor();
     }
 }
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
 declare namespace hanyeah.elec {
-    class Battery extends VoltageSource {
-        constructor(main: ElecMain);
-        initSkin(): void;
+    interface ITwoTerminal {
+        terminal0: Terminal;
+        terminal1: Terminal;
     }
 }
 /**
@@ -170,12 +210,32 @@ declare namespace hanyeah.elec {
 declare namespace hanyeah.elec {
     import InteractionEvent = PIXI.interaction.InteractionEvent;
     class DragPlugin extends PluginBase {
-        private map;
         constructor(main: ElecMain);
         destroy(): void;
         onMouseDown(e: InteractionEvent): void;
         onMouseMove(e: InteractionEvent): void;
         onMouseUp(e: InteractionEvent): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+declare namespace hanyeah.elec {
+    import InteractionEvent = PIXI.interaction.InteractionEvent;
+    class DrawWirePlugin extends PluginBase {
+        constructor(main: ElecMain);
+        destroy(): void;
+        onMouseDown(e: InteractionEvent): void;
+        onMouseMove(e: InteractionEvent): void;
+        onMouseUp(e: InteractionEvent): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+declare namespace hanyeah.elec {
+    class HotkeyPlugin extends PluginBase {
+        constructor(main: ElecMain);
     }
 }
 declare namespace hanyeah.elec {
@@ -198,11 +258,15 @@ declare namespace hanyeah.elec {
         stopTicker(): void;
         select(eqs: EqBase[], add: boolean): void;
         addEq(className: string, p: Point): EqBase;
-        removeEq(UID: number): EqBase;
+        removeEq(eq: EqBase): void;
+        getEq(UID: number): EqBase;
         moveSelectBy(dx: number, dy: number): void;
         moveStageBy(dx: number, dy: number): void;
         scaleBy(s: number, p: Point): void;
         selectByRect(rect: Rectangle): void;
+        selectAll(): void;
+        forEachEq(callBack: any): void;
+        getScale(): number;
         global2view(p: Point): Point;
     }
 }
@@ -230,7 +294,6 @@ declare namespace hanyeah.elec {
 declare namespace hanyeah.elec {
     import InteractionEvent = PIXI.interaction.InteractionEvent;
     class RoamPlugin extends PluginBase {
-        private map;
         constructor(main: ElecMain);
         destroy(): void;
         onMouseDown(e: InteractionEvent): void;
@@ -244,7 +307,6 @@ declare namespace hanyeah.elec {
 declare namespace hanyeah.elec {
     import InteractionEvent = PIXI.interaction.InteractionEvent;
     class SelectPlugin extends PluginBase {
-        private map;
         constructor(main: ElecMain);
         destroy(): void;
         onClick(e: InteractionEvent): void;
@@ -280,10 +342,12 @@ declare namespace hanyeah.elec {
         getData(): any;
     }
 }
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
 declare namespace hanyeah.elec {
-    class SingleSwitch extends ElecEq {
-        constructor(main: ElecMain);
-        initSkin(): void;
+    class Terminal extends PIXI.DisplayObject {
+        constructor();
     }
 }
 /**
@@ -302,5 +366,46 @@ declare namespace hanyeah.elec {
         canRedo(): boolean;
         readonly currentUndoStep: number;
         readonly currentRedoStep: number;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+declare namespace hanyeah.elec {
+    import Rectangle = PIXI.Rectangle;
+    import Point = PIXI.Point;
+    class RectangleUtil {
+        static isEmpty(rect: Rectangle): boolean;
+        static normalize(rect: Rectangle): void;
+        /**
+         * 通过填充两个矩形之间的水平和垂直空间，将这两个矩形组合在一起以创建一个新的 Rectangle 对象。
+         * @param toUnion  Rectangle
+         * @returns {Rectangle}
+         */
+        static union(rect0: Rectangle, rect1: Rectangle): Rectangle;
+        /**
+         * 按指定量增加 Rectangle 对象的大小（以像素为单位）。
+         * @param dx
+         * @param dy
+         */
+        static inflate(rect0: Rectangle, dx: number, dy: number): void;
+        static containsPoint(rect: Rectangle, point: Point): boolean;
+        /**
+         * 确定在 toIntersect 参数中指定的对象是否与此 Rectangle 对象相交。
+         * 此方法检查指定的 Rectangle 对象的 x、y、width 和 height 属性，以查看它是否与此 Rectangle 对象相交。
+         * @param toIntersect Rectangle
+         * @param notEdge 设置只挨着边的不算相交(默认算相交)
+         * @returns {boolean}
+         */
+        static intersects(rect0: Rectangle, rect1: Rectangle, notEdge: boolean): boolean;
+        /**
+         * 如果在 toIntersect 参数中指定的 Rectangle 对象与此 Rectangle 对象相交，
+         * 则返回交集区域作为 Rectangle 对象。
+         * 如果矩形不相交，则此方法返回一个空的 Rectangle 对象，其属性设置为 0。
+         * @param toIntersect  Rectangle
+         * @param notEdge 设置只挨着边的不算相交(默认算相交)
+         * @returns {Rectangle}
+         */
+        static intersection(rect0: Rectangle, rect1: Rectangle, notEdge: boolean): Rectangle;
     }
 }
