@@ -10,27 +10,22 @@ namespace hanyeah.elec {
 
     constructor(main: ElecMain) {
       super(main);
-      this.main.stage.addListener("pointerdown", this.mouseDownHandler);
-      this.main.stage.addListener("pointermove", this.mouseMoveHandler);
-      this.main.stage.addListener("pointerup", this.mouseUpHandler);
-      this.main.stage.addListener("pointerupoutside", this.mouseUpHandler);
     }
 
     destroy() {
-      this.main.stage.removeListener("pointerdown", this.mouseDownHandler);
-      this.main.stage.removeListener("pointermove", this.mouseMoveHandler);
-      this.main.stage.removeListener("pointerup", this.mouseUpHandler);
-      this.main.stage.removeListener("pointerupoutside", this.mouseUpHandler);
+      this.map = null;
       super.destroy();
     }
 
-    private mouseDownHandler = (e: InteractionEvent) => {
-      if (e.data.button === 0 && e.target === this.main.stage) {
+    public onMouseDown(e: InteractionEvent) {
+      super.onMouseDown(e);
+      if (e.target === this.main.stage) {
         this.map[e.data.identifier] = e.data.global.clone();
       }
-    };
+    }
 
-    private mouseMoveHandler = (e: InteractionEvent) => {
+    public onMouseMove(e: InteractionEvent) {
+      super.onMouseMove(e);
       const lp: Point = this.map[e.data.identifier] as Point;
       if (lp) {
         const p: Point = e.data.global;
@@ -38,13 +33,14 @@ namespace hanyeah.elec {
         lp.x = p.x;
         lp.y = p.y;
       }
-    };
+    }
 
-    private mouseUpHandler = (e: InteractionEvent) => {
+    public onMouseUp(e: InteractionEvent) {
+      super.onMouseUp(e);
       if (this.map[e.data.identifier]) {
         delete this.map[e.data.identifier];
       }
-    };
+    }
 
   }
 }

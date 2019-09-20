@@ -8,41 +8,36 @@ namespace hanyeah.elec {
 
     constructor(main: ElecMain) {
       super(main);
-      this.main.viewStack.eqLayer.addListener("pointerdown", this.mouseDownHandler);
-      this.main.stage.addListener("pointermove", this.mouseMoveHandler);
-      this.main.stage.addListener("pointerup", this.mouseUpHandler);
-      this.main.stage.addListener("pointerupoutside", this.mouseUpHandler);
     }
 
     destroy() {
-      this.main.viewStack.eqLayer.removeListener("pointerdown", this.mouseDownHandler);
-      this.main.stage.removeListener("pointermove", this.mouseMoveHandler);
-      this.main.stage.removeListener("pointerup", this.mouseUpHandler);
-      this.main.stage.removeListener("pointerupoutside", this.mouseUpHandler);
       this.map = null;
       super.destroy();
     }
 
-    private mouseDownHandler = (e: InteractionEvent) => {
+    public onMouseDown(e: InteractionEvent) {
+      super.onMouseDown(e);
       if (e.target instanceof EqBase) {
-        this.map[e.data.identifier] = new DragItem(e.target as EqBase, e.data.identifier, this.main.viewStack.eqLayer.toLocal(e.data.global));
+        this.map[e.data.identifier] = new DragItem(e.target as EqBase, e.data.identifier, this.global2view(e.data.global));
       }
-    };
+    }
 
-    private mouseMoveHandler = (e: InteractionEvent) => {
+    public onMouseMove(e: InteractionEvent) {
+      super.onMouseMove(e);
       const dragItem: DragItem = this.map[e.data.identifier] as DragItem;
       if (dragItem) {
         if (!dragItem.eq.isSelect) {
           this.main.select([dragItem.eq], e.data.originalEvent.ctrlKey);
         }
-        const p: Point = this.main.viewStack.eqLayer.toLocal(e.data.global);
+        const p: Point = this.global2view(e.data.global);
         this.main.moveSelectBy(p.x - dragItem.p.x, p.y - dragItem.p.y);
         dragItem.p = p;
         dragItem.moved = true;
       }
-    };
+    }
 
-    private mouseUpHandler = (e: InteractionEvent) => {
+    public onMouseUp(e: InteractionEvent) {
+      super.onMouseUp(e);
       if (this.map[e.data.identifier]) {
         const dragItem: DragItem = this.map[e.data.identifier] as DragItem;
         if (dragItem.moved) {
@@ -50,7 +45,7 @@ namespace hanyeah.elec {
         }
         delete this.map[e.data.identifier];
       }
-    };
+    }
 
   }
 

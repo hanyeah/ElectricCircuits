@@ -9,12 +9,10 @@ namespace hanyeah.elec {
     public stage: PIXI.Container;
     public bg: PIXI.Graphics;
     public viewStack: ViewStack;
-    private selectPlugin: SelectPlugin;
-    private dragPlugin: DragPlugin;
-    private roamPlugin: RoamPlugin;
-    private zoomPlugin: ZoomPlugin;
+    public pluginManager: PluginManager;
     private selects: EqBase[] = [];
     private ticker: PIXI.ticker.Ticker;
+
 
     constructor(canvas: HTMLCanvasElement) {
       super();
@@ -33,10 +31,12 @@ namespace hanyeah.elec {
       this.startTicker();
       this.ticker.add(this.update, this);
       // init plugin
-      this.selectPlugin = new SelectPlugin(this);
-      this.dragPlugin = new DragPlugin(this);
-      this.roamPlugin = new RoamPlugin(this);
-      this.zoomPlugin = new ZoomPlugin(this);
+      this.pluginManager = new PluginManager(this);
+      this.pluginManager.registerPlugin(new DragPlugin(this));
+      this.pluginManager.registerPlugin(new SelectPlugin(this));
+      this.pluginManager.registerPlugin(new RoamPlugin(this));
+      this.pluginManager.registerPlugin(new ZoomPlugin(this));
+      this.pluginManager.registerPlugin(new HotkeyPlugin(this));
 
       this.resized();
 
@@ -45,10 +45,7 @@ namespace hanyeah.elec {
     }
 
     destroy() {
-      this.selectPlugin.destroy();
-      this.dragPlugin.destroy();
-      this.roamPlugin.destroy();
-      this.zoomPlugin.destroy();
+      this.pluginManager.destroy();
       this.stopTicker();
       this.ticker = null;
     }
@@ -152,6 +149,10 @@ namespace hanyeah.elec {
         }
       }
       this.select(arr, false);
+    }
+
+    public global2view(p: Point): Point {
+      return this.viewStack.toLocal(p);
     }
 
   }
