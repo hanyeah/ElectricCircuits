@@ -23,6 +23,7 @@ var hanyeah;
             function Container(main) {
                 var _this = _super.call(this) || this;
                 _this.UID = elec.MathUtil.getUID();
+                _this.className = "Container";
                 _this.main = main;
                 return _this;
             }
@@ -46,7 +47,8 @@ var hanyeah;
             };
             Container.prototype.getData = function () {
                 return {
-                    UID: this.UID
+                    UID: this.UID,
+                    className: this.className
                 };
             };
             Container.prototype.setData = function (obj) {
@@ -109,6 +111,7 @@ var hanyeah;
                 _this.U = 0;
                 _this.I = 0;
                 _this.R = 0;
+                _this.isBreak = false;
                 return _this;
             }
             ElecEq.prototype.addTerminal = function (x, y) {
@@ -149,20 +152,30 @@ var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
+        var Edge = hanyeah.electricity.elecData.Edge;
         var TwoTerminalEq = /** @class */ (function (_super) {
             __extends(TwoTerminalEq, _super);
             function TwoTerminalEq(main) {
                 var _this = _super.call(this, main) || this;
                 _this.terminal0 = _this.addTerminal(-50, 0);
                 _this.terminal1 = _this.addTerminal(50, 0);
+                _this.edge = new Edge(_this.main.world, null, null);
+                _this.terminal0.vertex = _this.edge.vertex0;
+                _this.terminal1.vertex = _this.edge.vertex1;
                 return _this;
             }
             TwoTerminalEq.prototype.destroy = function () {
+                this.edge.destroy();
                 this.terminal0.destroy();
                 this.terminal1.destroy();
                 this.terminal0 = null;
                 this.terminal1 = null;
                 _super.prototype.destroy.call(this);
+            };
+            TwoTerminalEq.prototype.update = function (dt) {
+                _super.prototype.update.call(this, dt);
+                this.U = this.edge.U;
+                this.I = this.edge.I;
             };
             TwoTerminalEq.prototype.getData = function () {
                 var obj = _super.prototype.getData.call(this);
@@ -183,26 +196,14 @@ var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
-        var VoltageSource = /** @class */ (function (_super) {
-            __extends(VoltageSource, _super);
-            function VoltageSource(main) {
-                var _this = _super.call(this, main) || this;
-                _this.SU = 0;
-                return _this;
-            }
-            return VoltageSource;
-        }(elec.TwoTerminalEq));
-        elec.VoltageSource = VoltageSource;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
         var Resistance = /** @class */ (function (_super) {
             __extends(Resistance, _super);
             function Resistance(main) {
-                return _super.call(this, main) || this;
+                var _this = _super.call(this, main) || this;
+                _this.className = "Resistance";
+                _this.R = 1.0;
+                _this.edge.R = _this.R;
+                return _this;
             }
             Resistance.prototype.initSkin = function () {
                 var gra = new PIXI.Graphics();
@@ -331,12 +332,14 @@ var hanyeah;
     (function (elec) {
         var Point = PIXI.Point;
         var Rectangle = PIXI.Rectangle;
+        var World = hanyeah.electricity.World;
         var ElecMain = /** @class */ (function (_super) {
             __extends(ElecMain, _super);
             function ElecMain(canvas) {
                 var _this = _super.call(this) || this;
                 _this.selects = [];
                 window.main = _this;
+                _this.world = new World();
                 // init app
                 _this.canvas = canvas;
                 _this.app = new PIXI.Application({ view: canvas, transparent: true, antialias: true });
@@ -363,6 +366,7 @@ var hanyeah;
                 _this.addEq("Resistance", new Point(200, 300));
                 _this.addEq("SingleSwitch", new Point(200, 400));
                 _this.addEq("Wire", new Point(500, 400));
+                _this.addEq("Bulb", new Point(350, 350));
                 return _this;
             }
             ElecMain.prototype.destroy = function () {
@@ -375,6 +379,7 @@ var hanyeah;
                 for (var i = 0; i < this.selects.length; i++) {
                     this.selects[i].isSelect = true;
                 }
+                this.world.calculate();
                 this.forEachEq(function (eq) {
                     eq.update(_this.ticker.deltaMS);
                 });
@@ -422,9 +427,7 @@ var hanyeah;
             };
             ElecMain.prototype.removeEq = function (eq) {
                 this.viewStack.eqLayer.removeChild(eq);
-                if (this.selects) {
-                    elec.ArrayUtil.remove(this.selects, eq);
-                }
+                elec.ArrayUtil.remove(this.selects, eq);
                 eq.destroy();
             };
             ElecMain.prototype.getEq = function (UID) {
@@ -466,6 +469,21 @@ var hanyeah;
                 });
                 this.select(arr, false);
             };
+            ElecMain.prototype.deleteSelects = function () {
+                var _this = this;
+                this.selects.forEach(function (eq) {
+                    _this.viewStack.eqLayer.removeChild(eq);
+                    eq.destroy();
+                });
+                this.selects = [];
+            };
+            ElecMain.prototype.deleteAll = function () {
+                this.forEachEq(function (eq) {
+                    eq.destroy();
+                });
+                this.viewStack.eqLayer.removeChildren();
+                this.selects = [];
+            };
             ElecMain.prototype.forEachEq = function (callBack, inverted) {
                 if (inverted === void 0) { inverted = false; }
                 if (inverted) {
@@ -479,11 +497,43 @@ var hanyeah;
                     }
                 }
             };
+            ElecMain.prototype.getData = function () {
+                var obj = {};
+                obj.eqs = [];
+                this.forEachEq(function (eq) {
+                    obj.eqs.push(eq.getData());
+                });
+                return obj;
+            };
+            ElecMain.prototype.setData = function (obj) {
+            };
             ElecMain.prototype.getScale = function () {
                 return this.viewStack.scale.x;
             };
             ElecMain.prototype.global2view = function (p) {
                 return this.viewStack.toLocal(p);
+            };
+            ElecMain.prototype.getFriend = function (eq) {
+                var _this = this;
+                var vertex0 = this.getRootVertex(eq.terminal0);
+                var vertex1 = this.getRootVertex(eq.terminal1);
+                var arr = [];
+                this.forEachEq(function (eq0) {
+                    if (eq0 instanceof elec.TwoTerminalEq) {
+                        var v00 = _this.getRootVertex(eq0.terminal0);
+                        var v01 = _this.getRootVertex(eq0.terminal1);
+                        if (v00 === vertex0
+                            || v00 === vertex1
+                            || v01 === vertex0
+                            || v01 === vertex1) {
+                            arr.push(eq0);
+                        }
+                    }
+                });
+                return arr;
+            };
+            ElecMain.prototype.getRootVertex = function (terminal) {
+                return terminal.vertex.connUFS.root.userData;
             };
             return ElecMain;
         }(elec.HObject));
@@ -500,6 +550,34 @@ var hanyeah;
             };
             return StageHitArea;
         }());
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var HitArea = /** @class */ (function () {
+            function HitArea(con, x, y) {
+                this.r = 10;
+                var gra = new PIXI.Graphics();
+                gra.beginFill(0xff0000, 0.3);
+                gra.drawCircle(x, y, this.r);
+                gra.endFill();
+                con.addChild(gra);
+                this.x = x;
+                this.y = y;
+            }
+            HitArea.prototype.contains = function (x, y) {
+                var dx = x - this.x;
+                var dy = y - this.y;
+                return dx * dx + dy * dy < this.r * this.r;
+            };
+            return HitArea;
+        }());
+        elec.HitArea = HitArea;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -524,6 +602,20 @@ var hanyeah;
                 gra.endFill();
                 return _this;
             }
+            Object.defineProperty(Terminal.prototype, "leader", {
+                get: function () {
+                    return this._leader;
+                },
+                set: function (value) {
+                    this.disConnect();
+                    this._leader = value;
+                    if (value) {
+                        this.connect(value);
+                    }
+                },
+                enumerable: true,
+                configurable: true
+            });
             Terminal.prototype.destroy = function () {
                 this.leader = null;
                 _super.prototype.destroy.call(this);
@@ -554,6 +646,16 @@ var hanyeah;
                     // this.main
                 }
             };
+            Terminal.prototype.connect = function (terminal) {
+                if (this.vertex && terminal.vertex) {
+                    this.vertex.connect(terminal.vertex);
+                }
+            };
+            Terminal.prototype.disConnect = function () {
+                if (this.vertex) {
+                    this.vertex.disConnect();
+                }
+            };
             return Terminal;
         }(elec.Container));
         elec.Terminal = Terminal;
@@ -575,7 +677,11 @@ var hanyeah;
         var Battery = /** @class */ (function (_super) {
             __extends(Battery, _super);
             function Battery(main) {
-                return _super.call(this, main) || this;
+                var _this = _super.call(this, main) || this;
+                _this.SU = 1.5;
+                _this.className = "Battery";
+                _this.edge.SU = _this.SU;
+                return _this;
             }
             Battery.prototype.initSkin = function () {
                 var gra = new PIXI.Graphics();
@@ -586,8 +692,50 @@ var hanyeah;
                 this.addChild(gra);
             };
             return Battery;
-        }(elec.VoltageSource));
+        }(elec.TwoTerminalEq));
         elec.Battery = Battery;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Graphics = PIXI.Graphics;
+        var Bulb = /** @class */ (function (_super) {
+            __extends(Bulb, _super);
+            function Bulb(main) {
+                return _super.call(this, main) || this;
+            }
+            Bulb.prototype.initSkin = function () {
+                var light = new Graphics();
+                light.beginFill(0xffff00, 1.0);
+                light.drawCircle(0, 0, 30);
+                light.endFill();
+                this.light = light;
+                this.addChild(light);
+                var gra = new Graphics();
+                gra.lineStyle(6, 0x000000, 1.0);
+                gra.drawCircle(0, 0, 30);
+                gra.moveTo(21, 21);
+                gra.lineTo(-21, -21);
+                gra.moveTo(-21, 21);
+                gra.lineTo(21, -21);
+                gra.moveTo(-50, 0);
+                gra.lineTo(-30, 0);
+                gra.moveTo(50, 0);
+                gra.lineTo(30, 0);
+                this.addChild(gra);
+            };
+            Bulb.prototype.update = function (dt) {
+                _super.prototype.update.call(this, dt);
+                this.light.alpha = this.I === 0.0 ? 0 : 1.0;
+            };
+            return Bulb;
+        }(elec.Resistance));
+        elec.Bulb = Bulb;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 var hanyeah;
@@ -598,7 +746,12 @@ var hanyeah;
         var SingleSwitch = /** @class */ (function (_super) {
             __extends(SingleSwitch, _super);
             function SingleSwitch(main) {
-                return _super.call(this, main) || this;
+                var _this = _super.call(this, main) || this;
+                _this.className = "SingleSwitch";
+                _this.isBreak = true;
+                _this.edge.isBreak = _this.isBreak;
+                _this.knife.addListener("pointertap", _this.toggleOpen, _this);
+                return _this;
             }
             SingleSwitch.prototype.initSkin = function () {
                 var gra = new Graphics();
@@ -614,8 +767,18 @@ var hanyeah;
                 this.addChild(knife);
                 knife.x = -40;
                 knife.y = -15;
-                knife.rotation = -10 * Math.PI / 180;
+                knife.rotation = -30 * Math.PI / 180;
                 this.knife = knife;
+                this.knife.interactive = true;
+                this.knife.hitArea = new elec.HitArea(this.knife, 110, 0);
+            };
+            SingleSwitch.prototype.update = function (dt) {
+                _super.prototype.update.call(this, dt);
+                this.knife.rotation = this.isBreak ? -0.5 : 0;
+            };
+            SingleSwitch.prototype.toggleOpen = function (e) {
+                this.isBreak = !this.isBreak;
+                this.edge.isBreak = this.isBreak;
             };
             return SingleSwitch;
         }(elec.TwoTerminalEq));
@@ -632,8 +795,8 @@ var hanyeah;
             __extends(Wire, _super);
             function Wire(main) {
                 var _this = _super.call(this, main) || this;
-                _this.className = "Wire";
                 _this.vertexs = [];
+                _this.className = "Wire";
                 _this.vertexs.push(new Point(-50, 0), new Point(50, 0));
                 return _this;
             }

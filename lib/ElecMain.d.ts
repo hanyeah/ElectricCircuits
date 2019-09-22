@@ -4,6 +4,7 @@
 declare namespace hanyeah.elec {
     class Container extends PIXI.Container {
         UID: number;
+        className: string;
         main: ElecMain;
         constructor(main: ElecMain);
         update(dt: number): void;
@@ -32,6 +33,7 @@ declare namespace hanyeah.elec {
         U: number;
         I: number;
         R: number;
+        isBreak: boolean;
         constructor(main: ElecMain);
         addTerminal(x: number, y: number): Terminal;
     }
@@ -50,19 +52,16 @@ declare namespace hanyeah.elec {
  * Created by hanyeah on 2019/9/21.
  */
 declare namespace hanyeah.elec {
+    import Edge = hanyeah.electricity.elecData.Edge;
     class TwoTerminalEq extends ElecEq {
         terminal0: Terminal;
         terminal1: Terminal;
+        edge: Edge;
         constructor(main: ElecMain);
         destroy(): void;
+        update(dt: number): void;
         getData(): any;
         setData(obj: any): void;
-    }
-}
-declare namespace hanyeah.elec {
-    class VoltageSource extends TwoTerminalEq {
-        SU: number;
-        constructor(main: ElecMain);
     }
 }
 declare namespace hanyeah.elec {
@@ -143,7 +142,9 @@ declare namespace hanyeah.elec {
 declare namespace hanyeah.elec {
     import Point = PIXI.Point;
     import Rectangle = PIXI.Rectangle;
+    import World = hanyeah.electricity.World;
     class ElecMain extends HObject {
+        world: World;
         app: PIXI.Application;
         canvas: HTMLCanvasElement;
         stage: PIXI.Container;
@@ -167,9 +168,27 @@ declare namespace hanyeah.elec {
         scaleBy(s: number, p: Point): void;
         selectByRect(rect: Rectangle): void;
         selectAll(): void;
+        deleteSelects(): void;
+        deleteAll(): void;
         forEachEq(callBack: Function, inverted?: boolean): void;
+        getData(): any;
+        setData(obj: any): void;
         getScale(): number;
         global2view(p: Point): Point;
+        getFriend(eq: TwoTerminalEq): TwoTerminalEq[];
+        private getRootVertex;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+declare namespace hanyeah.elec {
+    class HitArea implements PIXI.IHitArea {
+        r: number;
+        x: number;
+        y: number;
+        constructor(con: PIXI.Container, x: number, y: number);
+        contains(x: number, y: number): boolean;
     }
 }
 /**
@@ -177,10 +196,13 @@ declare namespace hanyeah.elec {
  */
 declare namespace hanyeah.elec {
     import Point = PIXI.Point;
+    import Vertex = hanyeah.electricity.elecData.Vertex;
     class Terminal extends Container {
         UID: number;
         leader: Terminal;
         eq: EqBase;
+        vertex: Vertex;
+        private _leader;
         constructor(main: ElecMain);
         destroy(): void;
         update(): void;
@@ -188,26 +210,42 @@ declare namespace hanyeah.elec {
         setPosition2(x: number, y: number): void;
         getData(): any;
         setData(obj: any): void;
+        private connect;
+        private disConnect;
     }
 }
 declare namespace hanyeah.elec {
-    class Battery extends VoltageSource {
+    class Battery extends TwoTerminalEq {
+        SU: number;
         constructor(main: ElecMain);
         initSkin(): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+declare namespace hanyeah.elec {
+    class Bulb extends Resistance {
+        private light;
+        constructor(main: ElecMain);
+        initSkin(): void;
+        update(dt: number): void;
     }
 }
 declare namespace hanyeah.elec {
     import Graphics = PIXI.Graphics;
+    import InteractionEvent = PIXI.interaction.InteractionEvent;
     class SingleSwitch extends TwoTerminalEq {
         knife: Graphics;
         constructor(main: ElecMain);
         initSkin(): void;
+        update(dt: number): void;
+        toggleOpen(e: InteractionEvent): void;
     }
 }
 declare namespace hanyeah.elec {
     import Point = PIXI.Point;
     class Wire extends Resistance {
-        className: string;
         vertexs: Point[];
         private skin;
         constructor(main: ElecMain);

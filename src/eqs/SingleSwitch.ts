@@ -1,12 +1,18 @@
 namespace hanyeah.elec{
   import Graphics = PIXI.Graphics;
+  import Point = PIXI.Point;
+  import InteractionEvent = PIXI.interaction.InteractionEvent;
   export class SingleSwitch extends TwoTerminalEq{
     public knife: Graphics;
     constructor(main: ElecMain) {
       super(main);
+      this.className = "SingleSwitch";
+      this.isBreak = true;
+      this.edge.isBreak = this.isBreak;
+      this.knife.addListener("pointertap", this.toggleOpen, this);
     }
 
-    initSkin(){
+    public initSkin(){
       const gra: Graphics = new Graphics();
       gra.beginFill(0x000000, 1.0);
       gra.drawRect(-50, 0, 100, 20);
@@ -21,8 +27,21 @@ namespace hanyeah.elec{
       this.addChild(knife);
       knife.x = -40;
       knife.y = -15;
-      knife.rotation = -10 * Math.PI / 180;
+      knife.rotation = -30 * Math.PI / 180;
       this.knife = knife;
+      this.knife.interactive = true;
+      this.knife.hitArea = new HitArea(this.knife, 110, 0);
     }
+
+    public update(dt: number) {
+      super.update(dt);
+      this.knife.rotation = this.isBreak ? -0.5 : 0;
+    }
+
+    public toggleOpen(e: InteractionEvent){
+      this.isBreak = !this.isBreak;
+      this.edge.isBreak = this.isBreak;
+    }
+
   }
 }

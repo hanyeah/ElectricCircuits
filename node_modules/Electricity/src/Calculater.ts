@@ -36,7 +36,7 @@ namespace hanyeah.electricity{
           continue;
         }
         if (edge.vertex0.graphUFS.root !== edge.vertex1.graphUFS.root){
-          edge.vertex0.graphUFS.root = edge.vertex1.graphUFS.root;
+          edge.vertex0.graphUFS.root.root = edge.vertex1.graphUFS.root;
         }
       }
       // 按回路分到不同的图
@@ -46,6 +46,9 @@ namespace hanyeah.electricity{
       let n: number = 0;
       for (let i: number = 0; i < en; i++) {
         edge = edges[i];
+        if (edge.isBreak) {
+          continue;
+        }
         graphUFS = edge.vertex0.graphUFS.root;
         if (graphUFS.index === -1) {
           graph = new Graph();
@@ -60,10 +63,12 @@ namespace hanyeah.electricity{
       for (let i: number = 0; i < vn; i++) {
         vertex = vertexs[i];
         if (vertex.connUFS.root.index === -1) {
-          graph = graphs[vertex.graphUFS.root.index];
-          graph.vertexs.push(vertex.connUFS.root.userData as Vertex);
-          vertex.connUFS.root.index = graph.vn;
-          graph.vn++;
+          if (vertex.graphUFS.root.index !== -1) {
+            graph = graphs[vertex.graphUFS.root.index];
+            graph.vertexs.push(vertex.connUFS.root.userData as Vertex);
+            vertex.connUFS.root.index = graph.vn;
+            graph.vn++;
+          }
         }
       }
       // 计算

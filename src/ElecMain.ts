@@ -2,8 +2,11 @@ namespace hanyeah.elec {
 
   import Point = PIXI.Point;
   import Rectangle = PIXI.Rectangle;
+  import World = hanyeah.electricity.World;
+  import Vertex = hanyeah.electricity.elecData.Vertex;
   export class ElecMain extends HObject {
 
+    public world: World;
     public app: PIXI.Application;
     public canvas: HTMLCanvasElement;
     public stage: PIXI.Container;
@@ -13,10 +16,10 @@ namespace hanyeah.elec {
     private selects: EqBase[] = [];
     private ticker: PIXI.ticker.Ticker;
 
-
     constructor(canvas: HTMLCanvasElement) {
       super();
       (window as any).main = this;
+      this.world = new World();
       // init app
       this.canvas = canvas;
       this.app = new PIXI.Application({view: canvas, transparent: true, antialias: true});
@@ -45,6 +48,7 @@ namespace hanyeah.elec {
       this.addEq("Resistance", new Point(200, 300));
       this.addEq("SingleSwitch", new Point(200, 400));
       this.addEq("Wire", new Point(500, 400));
+      this.addEq("Bulb", new Point(350, 350));
     }
 
     public destroy() {
@@ -57,6 +61,7 @@ namespace hanyeah.elec {
       for (let i: number = 0; i < this.selects.length; i++) {
         this.selects[i].isSelect = true;
       }
+      this.world.calculate();
       this.forEachEq((eq: EqBase) => {
         eq.update(this.ticker.deltaMS);
       });
@@ -110,9 +115,7 @@ namespace hanyeah.elec {
 
     public removeEq(eq: EqBase): void{
       this.viewStack.eqLayer.removeChild(eq);
-      if (this.selects) {
-        ArrayUtil.remove(this.selects, eq);
-      }
+      ArrayUtil.remove(this.selects, eq);
       eq.destroy();
     }
 
@@ -161,6 +164,22 @@ namespace hanyeah.elec {
       this.select(arr, false);
     }
 
+    public deleteSelects() {
+      this.selects.forEach((eq: EqBase) => {
+        this.viewStack.eqLayer.removeChild(eq);
+        eq.destroy();
+      });
+      this.selects = [];
+    }
+
+    public deleteAll() {
+      this.forEachEq((eq: EqBase) => {
+        eq.destroy();
+      });
+      this.viewStack.eqLayer.removeChildren();
+      this.selects = [];
+    }
+
     public forEachEq(callBack: Function, inverted: boolean = false) {
       if (inverted) {
         for (let i: number = this.viewStack.eqLayer.children.length - 1; i >= 0 ; i--) {
@@ -173,12 +192,49 @@ namespace hanyeah.elec {
       }
     }
 
+    public getData(): any {
+      const obj: any = {};
+      obj.eqs = [];
+      this.forEachEq((eq: EqBase) => {
+        obj.eqs.push(eq.getData());
+      });
+      return obj;
+    }
+
+    public setData(obj: any) {
+
+    }
+
     public getScale(): number {
       return this.viewStack.scale.x;
     }
 
     public global2view(p: Point): Point {
       return this.viewStack.toLocal(p);
+    }
+
+    public getFriend(eq: TwoTerminalEq): TwoTerminalEq[] {
+      const vertex0: Vertex = this.getRootVertex(eq.terminal0);
+      const vertex1: Vertex = this.getRootVertex(eq.terminal1);
+      const arr: TwoTerminalEq[] = [];
+      this.forEachEq((eq0: EqBase) => {
+        if (eq0 instanceof TwoTerminalEq) {
+          const v00: Vertex = this.getRootVertex((eq0 as TwoTerminalEq).terminal0);
+          const v01: Vertex = this.getRootVertex((eq0 as TwoTerminalEq).terminal1);
+          if (v00 === vertex0
+            || v00 === vertex1
+            || v01 === vertex0
+            || v01 === vertex1
+        ) {
+            arr.push(eq0);
+          }
+        }
+      });
+      return arr;
+    }
+
+    private getRootVertex(terminal: Terminal): Vertex{
+      return terminal.vertex.connUFS.root.userData as Vertex;
     }
 
   }

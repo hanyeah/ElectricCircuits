@@ -4,6 +4,7 @@
 namespace hanyeah.elec{
   export class Container extends PIXI.Container{
     public UID: number = MathUtil.getUID();
+    public className: string = "Container";
     public main: ElecMain;
     constructor(main: ElecMain) {
       super();
@@ -36,7 +37,8 @@ namespace hanyeah.elec{
 
     public getData(): any{
       return {
-        UID: this.UID
+        UID: this.UID,
+        className: this.className
       };
     }
 

@@ -1,10 +1,13 @@
 namespace hanyeah.elec {
-  export class Battery extends VoltageSource{
+  export class Battery extends TwoTerminalEq{
+    public SU: number = 1.5;
     constructor(main: ElecMain) {
       super(main);
+      this.className = "Battery";
+      this.edge.SU = this.SU;
     }
 
-    initSkin() {
+    public initSkin() {
       const gra: PIXI.Graphics = new PIXI.Graphics();
       gra.beginFill(0x000000, 1.0);
       gra.drawRect(-50, -20, 100, 40);

@@ -2,11 +2,11 @@ namespace hanyeah.elec {
   import Point = PIXI.Point;
   import Graphics = PIXI.Graphics;
   export class Wire extends Resistance {
-    public className: string = "Wire";
     public vertexs: Point[] = [];
     private skin: Graphics;
     constructor(main: ElecMain) {
       super(main);
+      this.className = "Wire";
       this.vertexs.push(new Point(-50, 0), new Point(50, 0));
     }
 
