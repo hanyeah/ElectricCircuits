@@ -22,6 +22,7 @@ var hanyeah;
             __extends(Container, _super);
             function Container(main) {
                 var _this = _super.call(this) || this;
+                _this.UID = elec.MathUtil.getUID();
                 _this.main = main;
                 return _this;
             }
@@ -43,6 +44,14 @@ var hanyeah;
                 this.scale.x = sx;
                 this.scale.y = sy;
             };
+            Container.prototype.getData = function () {
+                return {
+                    UID: this.UID
+                };
+            };
+            Container.prototype.setData = function (obj) {
+                this.UID = obj.UID;
+            };
             return Container;
         }(PIXI.Container));
         elec.Container = Container;
@@ -56,19 +65,18 @@ var hanyeah;
             __extends(EqBase, _super);
             function EqBase(main) {
                 var _this = _super.call(this, main) || this;
-                _this.UID = EqBase.COUNTING++;
                 _this.isSelect = false;
                 _this.initSkin();
                 _this.initPlugin();
                 _this.interactive = true;
                 return _this;
             }
+            EqBase.prototype.destroy = function () {
+                _super.prototype.destroy.call(this);
+            };
             EqBase.prototype.initSkin = function () {
             };
             EqBase.prototype.initPlugin = function () {
-            };
-            EqBase.prototype.destroy = function () {
-                _super.prototype.destroy.call(this);
             };
             EqBase.prototype.update = function (dt) {
                 if (this.isSelect) {
@@ -78,7 +86,13 @@ var hanyeah;
                     this.alpha = 1.0;
                 }
             };
-            EqBase.COUNTING = 0;
+            EqBase.prototype.getData = function () {
+                var obj = _super.prototype.getData.call(this);
+                return obj;
+            };
+            EqBase.prototype.setData = function (obj) {
+                _super.prototype.setData.call(this, obj);
+            };
             return EqBase;
         }(elec.Container));
         elec.EqBase = EqBase;
@@ -98,7 +112,8 @@ var hanyeah;
                 return _this;
             }
             ElecEq.prototype.addTerminal = function (x, y) {
-                var terminal = new elec.Terminal();
+                var terminal = new elec.Terminal(this.main);
+                terminal.eq = this;
                 terminal.x = x;
                 terminal.y = y;
                 this.addChild(terminal);
@@ -127,6 +142,43 @@ var hanyeah;
         elec.HObject = HObject;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/21.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var TwoTerminalEq = /** @class */ (function (_super) {
+            __extends(TwoTerminalEq, _super);
+            function TwoTerminalEq(main) {
+                var _this = _super.call(this, main) || this;
+                _this.terminal0 = _this.addTerminal(-50, 0);
+                _this.terminal1 = _this.addTerminal(50, 0);
+                return _this;
+            }
+            TwoTerminalEq.prototype.destroy = function () {
+                this.terminal0.destroy();
+                this.terminal1.destroy();
+                this.terminal0 = null;
+                this.terminal1 = null;
+                _super.prototype.destroy.call(this);
+            };
+            TwoTerminalEq.prototype.getData = function () {
+                var obj = _super.prototype.getData.call(this);
+                obj.terminal0 = this.terminal0.getData();
+                obj.terminal1 = this.terminal1.getData();
+                return obj;
+            };
+            TwoTerminalEq.prototype.setData = function (obj) {
+                _super.prototype.setData.call(this, obj);
+                this.terminal0.setData(obj.terminal0);
+            };
+            return TwoTerminalEq;
+        }(elec.ElecEq));
+        elec.TwoTerminalEq = TwoTerminalEq;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
 var hanyeah;
 (function (hanyeah) {
     var elec;
@@ -139,7 +191,7 @@ var hanyeah;
                 return _this;
             }
             return VoltageSource;
-        }(elec.ElecEq));
+        }(elec.TwoTerminalEq));
         elec.VoltageSource = VoltageSource;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
@@ -150,10 +202,7 @@ var hanyeah;
         var Resistance = /** @class */ (function (_super) {
             __extends(Resistance, _super);
             function Resistance(main) {
-                var _this = _super.call(this, main) || this;
-                _this.terminal0 = _this.addTerminal(-50, 0);
-                _this.terminal1 = _this.addTerminal(50, 0);
-                return _this;
+                return _super.call(this, main) || this;
             }
             Resistance.prototype.initSkin = function () {
                 var gra = new PIXI.Graphics();
@@ -165,7 +214,7 @@ var hanyeah;
                 this.addChild(gra);
             };
             return Resistance;
-        }(elec.ElecEq));
+        }(elec.TwoTerminalEq));
         elec.Resistance = Resistance;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
@@ -276,38 +325,247 @@ var hanyeah;
         elec.RedoUndo = RedoUndo;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Point = PIXI.Point;
+        var Rectangle = PIXI.Rectangle;
+        var ElecMain = /** @class */ (function (_super) {
+            __extends(ElecMain, _super);
+            function ElecMain(canvas) {
+                var _this = _super.call(this) || this;
+                _this.selects = [];
+                window.main = _this;
+                // init app
+                _this.canvas = canvas;
+                _this.app = new PIXI.Application({ view: canvas, transparent: true, antialias: true });
+                _this.stage = _this.app.stage;
+                _this.stage.interactive = true;
+                _this.stage.hitArea = new StageHitArea();
+                // init viewStack
+                _this.viewStack = new elec.ViewStack(_this);
+                _this.stage.addChild(_this.viewStack);
+                // init ticker
+                _this.ticker = _this.app.ticker;
+                _this.startTicker();
+                _this.ticker.add(_this.update, _this);
+                // init plugin
+                _this.pluginManager = new elec.PluginManager(_this);
+                _this.pluginManager.registerPlugin(new elec.DragPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.SelectPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.RoamPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.ZoomPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.HotkeyPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.DrawWirePlugin(_this));
+                _this.resized();
+                _this.addEq("Battery", new Point(500, 300));
+                _this.addEq("Resistance", new Point(200, 300));
+                _this.addEq("SingleSwitch", new Point(200, 400));
+                _this.addEq("Wire", new Point(500, 400));
+                return _this;
+            }
+            ElecMain.prototype.destroy = function () {
+                this.pluginManager.destroy();
+                this.stopTicker();
+                this.ticker = null;
+            };
+            ElecMain.prototype.update = function (deltaTime) {
+                var _this = this;
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].isSelect = true;
+                }
+                this.forEachEq(function (eq) {
+                    eq.update(_this.ticker.deltaMS);
+                });
+            };
+            ElecMain.prototype.resized = function () {
+            };
+            ElecMain.prototype.startTicker = function () {
+                if (!this.ticker.started) {
+                    this.ticker.start();
+                }
+            };
+            ElecMain.prototype.stopTicker = function () {
+                if (this.ticker.started) {
+                    this.ticker.stop();
+                }
+            };
+            ElecMain.prototype.select = function (eqs, add) {
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].isSelect = false;
+                }
+                if (!add) {
+                    this.selects.length = 0;
+                }
+                for (var i = 0; i < eqs.length; i++) {
+                    var eq = eqs[i];
+                    var ind = this.selects.indexOf(eq);
+                    if (ind === -1) {
+                        this.selects.push(eq);
+                    }
+                    else {
+                        this.selects.splice(ind, 1);
+                    }
+                }
+            };
+            ElecMain.prototype.addEq = function (className, p) {
+                var clazz = hanyeah.elec[className];
+                if (clazz) {
+                    var eq = new clazz(this);
+                    eq.x = p.x;
+                    eq.y = p.y;
+                    this.viewStack.eqLayer.addChild(eq);
+                    return eq;
+                }
+                return null;
+            };
+            ElecMain.prototype.removeEq = function (eq) {
+                this.viewStack.eqLayer.removeChild(eq);
+                if (this.selects) {
+                    elec.ArrayUtil.remove(this.selects, eq);
+                }
+                eq.destroy();
+            };
+            ElecMain.prototype.getEq = function (UID) {
+                return this.viewStack.eqLayer.getEqByUID(UID);
+            };
+            ElecMain.prototype.moveSelectBy = function (dx, dy) {
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].moveBy(dx, dy);
+                }
+            };
+            ElecMain.prototype.moveStageBy = function (dx, dy) {
+                this.viewStack.x += dx;
+                this.viewStack.y += dy;
+            };
+            ElecMain.prototype.scaleBy = function (s, p) {
+                var s0 = this.viewStack.scale.x;
+                var s1 = s0 * s;
+                this.viewStack.scale.x = s1;
+                this.viewStack.scale.y = s1;
+                this.viewStack.x += p.x * (1 - s) * s0;
+                this.viewStack.y += p.y * (1 - s) * s0;
+            };
+            ElecMain.prototype.selectByRect = function (rect) {
+                var sc = this.getScale();
+                var rect0 = new Rectangle();
+                var rect1 = new Rectangle(rect.x * sc + this.viewStack.x, rect.y * sc + this.viewStack.y, rect.width * sc, rect.height * sc);
+                var arr = [];
+                this.forEachEq(function (eq) {
+                    if (elec.RectangleUtil.intersects(rect1, eq.getBounds(true, rect0), false)) {
+                        arr.push(eq);
+                    }
+                });
+                this.select(arr, false);
+            };
+            ElecMain.prototype.selectAll = function () {
+                var arr = [];
+                this.forEachEq(function (eq) {
+                    arr.push(eq);
+                });
+                this.select(arr, false);
+            };
+            ElecMain.prototype.forEachEq = function (callBack, inverted) {
+                if (inverted === void 0) { inverted = false; }
+                if (inverted) {
+                    for (var i = this.viewStack.eqLayer.children.length - 1; i >= 0; i--) {
+                        callBack(this.viewStack.eqLayer.children[i]);
+                    }
+                }
+                else {
+                    for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
+                        callBack(this.viewStack.eqLayer.children[i]);
+                    }
+                }
+            };
+            ElecMain.prototype.getScale = function () {
+                return this.viewStack.scale.x;
+            };
+            ElecMain.prototype.global2view = function (p) {
+                return this.viewStack.toLocal(p);
+            };
+            return ElecMain;
+        }(elec.HObject));
+        elec.ElecMain = ElecMain;
+        /**
+         * stage的hitArea，永远返回true，实现舞台任意位置点击都有事件。
+         */
+        var StageHitArea = /** @class */ (function () {
+            function StageHitArea() {
+                //
+            }
+            StageHitArea.prototype.contains = function (x, y) {
+                return true;
+            };
+            return StageHitArea;
+        }());
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
 /**
- * Created by hanyeah on 2019/9/18.
+ * Created by hanyeah on 2019/9/20.
  */
 var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
-        var EqLayer = /** @class */ (function (_super) {
-            __extends(EqLayer, _super);
-            function EqLayer(main) {
+        var Point = PIXI.Point;
+        var Terminal = /** @class */ (function (_super) {
+            __extends(Terminal, _super);
+            function Terminal(main) {
                 var _this = _super.call(this, main) || this;
+                _this.UID = elec.MathUtil.getUID();
                 _this.interactive = true;
+                _this.hitArea = new TerminalHItArea();
+                var gra = new PIXI.Graphics();
+                _this.addChild(gra);
+                gra.beginFill(0xff0000, 0.2);
+                gra.drawCircle(0, 0, 5);
+                gra.endFill();
                 return _this;
             }
-            /**
-             * 根据UID获取器材。
-             * @param UID
-             * @returns {any}
-             */
-            EqLayer.prototype.getEqByUID = function (UID) {
-                var eq;
-                for (var i = 0; i < this.children.length; i++) {
-                    eq = this.children[i];
-                    if (eq.UID === UID) {
-                        return eq;
-                    }
-                }
-                return null;
+            Terminal.prototype.destroy = function () {
+                this.leader = null;
+                _super.prototype.destroy.call(this);
             };
-            return EqLayer;
+            Terminal.prototype.update = function () {
+                if (this.leader && this.parent) {
+                    this.setPosition(this.parent.toLocal(new Point(), this.leader));
+                }
+            };
+            Terminal.prototype.setPosition = function (p) {
+                this.setPosition2(p.x, p.y);
+            };
+            Terminal.prototype.setPosition2 = function (x, y) {
+                this.x = x;
+                this.y = y;
+            };
+            Terminal.prototype.getData = function () {
+                var obj = {};
+                obj.UID = this.UID;
+                if (this.leader) {
+                    obj.leader = this.leader.UID;
+                }
+                return obj;
+            };
+            Terminal.prototype.setData = function (obj) {
+                this.UID = obj.UID;
+                if (obj.leader) {
+                    // this.main
+                }
+            };
+            return Terminal;
         }(elec.Container));
-        elec.EqLayer = EqLayer;
+        elec.Terminal = Terminal;
+        var TerminalHItArea = /** @class */ (function () {
+            function TerminalHItArea() {
+                this.r = 10;
+            }
+            TerminalHItArea.prototype.contains = function (x, y) {
+                return x * x + y * y < this.r * this.r;
+            };
+            return TerminalHItArea;
+        }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 var hanyeah;
@@ -317,10 +575,7 @@ var hanyeah;
         var Battery = /** @class */ (function (_super) {
             __extends(Battery, _super);
             function Battery(main) {
-                var _this = _super.call(this, main) || this;
-                _this.terminal0 = _this.addTerminal(-50, 0);
-                _this.terminal1 = _this.addTerminal(50, 0);
-                return _this;
+                return _super.call(this, main) || this;
             }
             Battery.prototype.initSkin = function () {
                 var gra = new PIXI.Graphics();
@@ -343,30 +598,27 @@ var hanyeah;
         var SingleSwitch = /** @class */ (function (_super) {
             __extends(SingleSwitch, _super);
             function SingleSwitch(main) {
-                var _this = _super.call(this, main) || this;
-                _this.terminal0 = _this.addTerminal(-50, 0);
-                _this.terminal1 = _this.addTerminal(50, 0);
-                return _this;
+                return _super.call(this, main) || this;
             }
             SingleSwitch.prototype.initSkin = function () {
                 var gra = new Graphics();
                 gra.beginFill(0x000000, 1.0);
                 gra.drawRect(-50, 0, 100, 20);
-                gra.drawRect(-50, -20, 10, 20);
-                gra.drawRect(50, -20, -10, 20);
+                gra.drawRect(-45, -20, 10, 20);
+                gra.drawRect(45, -20, -10, 20);
                 gra.endFill();
                 this.addChild(gra);
                 var knife = new Graphics();
                 knife.beginFill(0x000000, 1.0);
-                knife.drawRect(-5, -10, 100, 20);
+                knife.drawRect(-5, -5, 120, 10);
                 this.addChild(knife);
-                knife.x = -45;
-                knife.y = -5;
+                knife.x = -40;
+                knife.y = -15;
                 knife.rotation = -10 * Math.PI / 180;
                 this.knife = knife;
             };
             return SingleSwitch;
-        }(elec.ElecEq));
+        }(elec.TwoTerminalEq));
         elec.SingleSwitch = SingleSwitch;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
@@ -380,12 +632,19 @@ var hanyeah;
             __extends(Wire, _super);
             function Wire(main) {
                 var _this = _super.call(this, main) || this;
+                _this.className = "Wire";
                 _this.vertexs = [];
                 _this.vertexs.push(new Point(-50, 0), new Point(50, 0));
                 return _this;
             }
             Wire.prototype.update = function (dt) {
                 _super.prototype.update.call(this, dt);
+                this.terminal0.update();
+                this.terminal1.update();
+                this.vertexs[0].x = this.terminal0.x;
+                this.vertexs[0].y = this.terminal0.y;
+                this.vertexs[1].x = this.terminal1.x;
+                this.vertexs[1].y = this.terminal1.y;
                 this.updateSkin();
             };
             Wire.prototype.initSkin = function () {
@@ -432,6 +691,40 @@ var hanyeah;
             return HEvent;
         }(elec.HObject));
         elec.HEvent = HEvent;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var EqLayer = /** @class */ (function (_super) {
+            __extends(EqLayer, _super);
+            function EqLayer(main) {
+                var _this = _super.call(this, main) || this;
+                _this.interactive = true;
+                return _this;
+            }
+            /**
+             * 根据UID获取器材。
+             * @param UID
+             * @returns {any}
+             */
+            EqLayer.prototype.getEqByUID = function (UID) {
+                var eq;
+                for (var i = 0; i < this.children.length; i++) {
+                    eq = this.children[i];
+                    if (eq.UID === UID) {
+                        return eq;
+                    }
+                }
+                return null;
+            };
+            return EqLayer;
+        }(elec.Container));
+        elec.EqLayer = EqLayer;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -534,9 +827,12 @@ var hanyeah;
                     var p = this.global2view(e.data.global);
                     var wire = this.main.addEq("Wire", new Point());
                     this.map[e.data.identifier] = wire;
-                    wire.vertexs[0] = p;
-                    wire.vertexs[1] = p.clone();
+                    wire.terminal0.setPosition(p);
+                    wire.terminal1.setPosition(p);
                     wire.interactive = false;
+                    wire.terminal0.leader = e.target;
+                    wire.terminal0.interactive = false;
+                    wire.terminal1.interactive = false;
                 }
             };
             DrawWirePlugin.prototype.onMouseMove = function (e) {
@@ -544,7 +840,7 @@ var hanyeah;
                 if (this.map[e.data.identifier]) {
                     var wire = this.map[e.data.identifier];
                     var p = this.global2view(e.data.global);
-                    wire.vertexs[1] = p;
+                    wire.terminal1.setPosition(p);
                 }
             };
             DrawWirePlugin.prototype.onMouseUp = function (e) {
@@ -552,13 +848,23 @@ var hanyeah;
                 if (this.map[e.data.identifier]) {
                     var wire = this.map[e.data.identifier];
                     var p = this.global2view(e.data.global);
-                    if (e.target instanceof elec.Terminal) {
+                    if (e.target instanceof elec.Terminal && this.isLegalTerminal(wire, e.target)) {
                         wire.interactive = true;
+                        wire.terminal1.leader = e.target;
+                        wire.terminal0.interactive = true;
+                        wire.terminal1.interactive = true;
                     }
                     else {
                         this.main.removeEq(wire);
                     }
+                    delete this.map[e.data.identifier];
                 }
+            };
+            DrawWirePlugin.prototype.isLegalTerminal = function (wire, terminal) {
+                if (terminal.leader) {
+                    terminal = terminal.leader;
+                }
+                return terminal !== wire.terminal0.leader && !(terminal.eq instanceof elec.Wire);
             };
             return DrawWirePlugin;
         }(elec.PluginBase));
@@ -580,173 +886,6 @@ var hanyeah;
             return HotkeyPlugin;
         }(elec.PluginBase));
         elec.HotkeyPlugin = HotkeyPlugin;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Point = PIXI.Point;
-        var Rectangle = PIXI.Rectangle;
-        var ElecMain = /** @class */ (function (_super) {
-            __extends(ElecMain, _super);
-            function ElecMain(canvas) {
-                var _this = _super.call(this) || this;
-                _this.selects = [];
-                window.main = _this;
-                // init app
-                _this.canvas = canvas;
-                _this.app = new PIXI.Application({ view: canvas, transparent: true });
-                _this.stage = _this.app.stage;
-                _this.stage.interactive = true;
-                _this.stage.hitArea = new StageHitArea();
-                // init viewStack
-                _this.viewStack = new elec.ViewStack(_this);
-                _this.stage.addChild(_this.viewStack);
-                // init ticker
-                _this.ticker = _this.app.ticker;
-                _this.startTicker();
-                _this.ticker.add(_this.update, _this);
-                // init plugin
-                _this.pluginManager = new elec.PluginManager(_this);
-                _this.pluginManager.registerPlugin(new elec.DragPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.SelectPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.RoamPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.ZoomPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.HotkeyPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.DrawWirePlugin(_this));
-                _this.resized();
-                _this.addEq("Battery", new Point(500, 300));
-                _this.addEq("Resistance", new Point(200, 300));
-                _this.addEq("SingleSwitch", new Point(200, 400));
-                _this.addEq("Wire", new Point(500, 400));
-                return _this;
-            }
-            ElecMain.prototype.destroy = function () {
-                this.pluginManager.destroy();
-                this.stopTicker();
-                this.ticker = null;
-            };
-            ElecMain.prototype.update = function (deltaTime) {
-                var eq;
-                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
-                    eq = this.viewStack.eqLayer.children[i];
-                    eq.update(this.ticker.deltaMS);
-                }
-            };
-            ElecMain.prototype.resized = function () {
-            };
-            ElecMain.prototype.startTicker = function () {
-                if (!this.ticker.started) {
-                    this.ticker.start();
-                }
-            };
-            ElecMain.prototype.stopTicker = function () {
-                if (this.ticker.started) {
-                    this.ticker.stop();
-                }
-            };
-            ElecMain.prototype.select = function (eqs, add) {
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].isSelect = false;
-                }
-                if (!add) {
-                    this.selects.length = 0;
-                }
-                for (var i = 0; i < eqs.length; i++) {
-                    var eq = eqs[i];
-                    var ind = this.selects.indexOf(eq);
-                    if (ind === -1) {
-                        this.selects.push(eq);
-                    }
-                    else {
-                        this.selects.splice(ind, 1);
-                    }
-                }
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].isSelect = true;
-                }
-            };
-            ElecMain.prototype.addEq = function (className, p) {
-                var clazz = hanyeah.elec[className];
-                if (clazz) {
-                    var eq = new clazz(this);
-                    eq.x = p.x;
-                    eq.y = p.y;
-                    this.viewStack.eqLayer.addChild(eq);
-                    return eq;
-                }
-                return null;
-            };
-            ElecMain.prototype.removeEq = function (eq) {
-                this.viewStack.eqLayer.removeChild(eq);
-                eq.destroy();
-            };
-            ElecMain.prototype.getEq = function (UID) {
-                return this.viewStack.eqLayer.getEqByUID(UID);
-            };
-            ElecMain.prototype.moveSelectBy = function (dx, dy) {
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].moveBy(dx, dy);
-                }
-            };
-            ElecMain.prototype.moveStageBy = function (dx, dy) {
-                this.viewStack.x += dx;
-                this.viewStack.y += dy;
-            };
-            ElecMain.prototype.scaleBy = function (s, p) {
-                var s0 = this.viewStack.scale.x;
-                var s1 = s0 * s;
-                this.viewStack.scale.x = s1;
-                this.viewStack.scale.y = s1;
-                this.viewStack.x += p.x * (1 - s) * s0;
-                this.viewStack.y += p.y * (1 - s) * s0;
-            };
-            ElecMain.prototype.selectByRect = function (rect) {
-                var sc = this.getScale();
-                var rect0 = new Rectangle();
-                var rect1 = new Rectangle(rect.x * sc + this.viewStack.x, rect.y * sc + this.viewStack.y, rect.width * sc, rect.height * sc);
-                var arr = [];
-                this.forEachEq(function (eq) {
-                    if (elec.RectangleUtil.intersects(rect1, eq.getBounds(true, rect0), false)) {
-                        arr.push(eq);
-                    }
-                });
-                this.select(arr, false);
-            };
-            ElecMain.prototype.selectAll = function () {
-                var arr = [];
-                this.forEachEq(function (eq) {
-                    arr.push(eq);
-                });
-                this.select(arr, false);
-            };
-            ElecMain.prototype.forEachEq = function (callBack) {
-                for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
-                    callBack(this.viewStack.eqLayer.children[i]);
-                }
-            };
-            ElecMain.prototype.getScale = function () {
-                return this.viewStack.scale.x;
-            };
-            ElecMain.prototype.global2view = function (p) {
-                return this.viewStack.toLocal(p);
-            };
-            return ElecMain;
-        }(elec.HObject));
-        elec.ElecMain = ElecMain;
-        /**
-         * stage的hitArea，永远返回true，实现舞台任意位置点击都有事件。
-         */
-        var StageHitArea = /** @class */ (function () {
-            function StageHitArea() {
-                //
-            }
-            StageHitArea.prototype.contains = function (x, y) {
-                return true;
-            };
-            return StageHitArea;
-        }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -1039,35 +1178,6 @@ var hanyeah;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
- * Created by hanyeah on 2019/9/20.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Terminal = /** @class */ (function (_super) {
-            __extends(Terminal, _super);
-            function Terminal() {
-                var _this = _super.call(this) || this;
-                _this.interactive = true;
-                _this.hitArea = new TerminalHItArea();
-                return _this;
-            }
-            return Terminal;
-        }(PIXI.DisplayObject));
-        elec.Terminal = Terminal;
-        var TerminalHItArea = /** @class */ (function () {
-            function TerminalHItArea() {
-                this.r = 10;
-            }
-            TerminalHItArea.prototype.contains = function (x, y) {
-                return x * x + y * y < this.r * this.r;
-            };
-            return TerminalHItArea;
-        }());
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-/**
  * Created by hanyeah on 2019/9/19.
  */
 var hanyeah;
@@ -1124,6 +1234,46 @@ var hanyeah;
             return RedoUndoManager;
         }());
         elec.RedoUndoManager = RedoUndoManager;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var ArrayUtil = /** @class */ (function () {
+            function ArrayUtil() {
+            }
+            ArrayUtil.remove = function (arr, item) {
+                var ind = arr.indexOf(item);
+                if (ind !== -1) {
+                    arr.splice(ind, 1);
+                }
+            };
+            return ArrayUtil;
+        }());
+        elec.ArrayUtil = ArrayUtil;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var MathUtil = /** @class */ (function () {
+            function MathUtil() {
+            }
+            MathUtil.getUID = function () {
+                return MathUtil.COUNTING++;
+            };
+            MathUtil.COUNTING = 0;
+            return MathUtil;
+        }());
+        elec.MathUtil = MathUtil;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**

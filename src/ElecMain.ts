@@ -19,7 +19,7 @@ namespace hanyeah.elec {
       (window as any).main = this;
       // init app
       this.canvas = canvas;
-      this.app = new PIXI.Application({view: canvas, transparent: true});
+      this.app = new PIXI.Application({view: canvas, transparent: true, antialias: true});
       this.stage = this.app.stage;
       this.stage.interactive = true;
       this.stage.hitArea = new StageHitArea();
@@ -54,11 +54,12 @@ namespace hanyeah.elec {
     }
 
     public update(deltaTime) {
-      let eq: EqBase;
-      for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
-        eq = this.viewStack.eqLayer.children[i] as EqBase;
-        eq.update(this.ticker.deltaMS);
+      for (let i: number = 0; i < this.selects.length; i++) {
+        this.selects[i].isSelect = true;
       }
+      this.forEachEq((eq: EqBase) => {
+        eq.update(this.ticker.deltaMS);
+      });
     }
 
     public resized() {
@@ -93,9 +94,6 @@ namespace hanyeah.elec {
           this.selects.splice(ind, 1);
         }
       }
-      for (let i: number = 0; i < this.selects.length; i++) {
-        this.selects[i].isSelect = true;
-      }
     }
 
     public addEq(className: string, p: Point): EqBase {
@@ -112,6 +110,9 @@ namespace hanyeah.elec {
 
     public removeEq(eq: EqBase): void{
       this.viewStack.eqLayer.removeChild(eq);
+      if (this.selects) {
+        ArrayUtil.remove(this.selects, eq);
+      }
       eq.destroy();
     }
 
@@ -160,9 +161,15 @@ namespace hanyeah.elec {
       this.select(arr, false);
     }
 
-    public forEachEq(callBack) {
-      for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
-        callBack(this.viewStack.eqLayer.children[i] as EqBase);
+    public forEachEq(callBack: Function, inverted: boolean = false) {
+      if (inverted) {
+        for (let i: number = this.viewStack.eqLayer.children.length - 1; i >= 0 ; i--) {
+          callBack(this.viewStack.eqLayer.children[i] as EqBase);
+        }
+      } else {
+        for (let i: number = 0; i < this.viewStack.eqLayer.children.length; i++) {
+          callBack(this.viewStack.eqLayer.children[i] as EqBase);
+        }
       }
     }
 
@@ -184,7 +191,7 @@ namespace hanyeah.elec {
       //
     }
 
-    contains(x: number, y: number): boolean {
+    public contains(x: number, y: number): boolean {
       return true;
     }
   }

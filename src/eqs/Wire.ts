@@ -2,9 +2,9 @@ namespace hanyeah.elec {
   import Point = PIXI.Point;
   import Graphics = PIXI.Graphics;
   export class Wire extends Resistance {
+    public className: string = "Wire";
     public vertexs: Point[] = [];
     private skin: Graphics;
-
     constructor(main: ElecMain) {
       super(main);
       this.vertexs.push(new Point(-50, 0), new Point(50, 0));
@@ -12,6 +12,12 @@ namespace hanyeah.elec {
 
     update(dt: number) {
       super.update(dt);
+      this.terminal0.update();
+      this.terminal1.update();
+      this.vertexs[0].x = this.terminal0.x;
+      this.vertexs[0].y = this.terminal0.y;
+      this.vertexs[1].x = this.terminal1.x;
+      this.vertexs[1].y = this.terminal1.y;
       this.updateSkin();
     }
 

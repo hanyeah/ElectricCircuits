@@ -19,9 +19,12 @@ namespace hanyeah.elec {
         const p: Point = this.global2view(e.data.global);
         const wire: Wire = this.main.addEq("Wire", new Point()) as Wire;
         this.map[e.data.identifier] = wire;
-        wire.vertexs[0] = p;
-        wire.vertexs[1] = p.clone();
+        wire.terminal0.setPosition(p);
+        wire.terminal1.setPosition(p);
         wire.interactive = false;
+        wire.terminal0.leader = e.target as Terminal;
+        wire.terminal0.interactive = false;
+        wire.terminal1.interactive = false;
       }
     }
 
@@ -30,7 +33,7 @@ namespace hanyeah.elec {
       if (this.map[e.data.identifier]) {
         const wire: Wire = this.map[e.data.identifier];
         const p: Point = this.global2view(e.data.global);
-        wire.vertexs[1] = p;
+        wire.terminal1.setPosition(p);
       }
     }
 
@@ -39,12 +42,23 @@ namespace hanyeah.elec {
       if (this.map[e.data.identifier]) {
         const wire: Wire = this.map[e.data.identifier];
         const p: Point = this.global2view(e.data.global);
-        if (e.target instanceof Terminal) {
+        if (e.target instanceof Terminal && this.isLegalTerminal(wire, e.target as Terminal)) {
           wire.interactive = true;
+          wire.terminal1.leader = e.target as Terminal;
+          wire.terminal0.interactive = true;
+          wire.terminal1.interactive = true;
         } else {
           this.main.removeEq(wire);
         }
+        delete this.map[e.data.identifier];
       }
+    }
+
+    private isLegalTerminal(wire: Wire, terminal: Terminal): boolean{
+      if (terminal.leader) {
+        terminal = terminal.leader;
+      }
+      return terminal !== wire.terminal0.leader && !(terminal.eq instanceof Wire);
     }
 
   }

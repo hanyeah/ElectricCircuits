@@ -1,7 +1,5 @@
 namespace hanyeah.elec {
   export class EqBase extends Container {
-    private static COUNTING: number = 0;
-    public UID: number = EqBase.COUNTING++;
     public isSelect: boolean = false;
 
     constructor(main: ElecMain) {
@@ -11,23 +9,31 @@ namespace hanyeah.elec {
       this.interactive = true;
     }
 
-    initSkin() {
-    }
-
-    initPlugin() {
-
-    }
-
-    destroy() {
+    public destroy() {
       super.destroy();
     }
 
-    update(dt: number) {
+    public initSkin() {
+    }
+
+    public initPlugin() {
+    }
+
+    public update(dt: number) {
       if (this.isSelect) {
         this.alpha = 0.8;
       } else {
         this.alpha = 1.0;
       }
+    }
+
+    public getData(): any{
+      const obj: any = super.getData();
+      return obj;
+    }
+
+    public setData(obj: any): void{
+      super.setData(obj);
     }
 
   }

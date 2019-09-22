@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npm run build && npm run server",
     "copylibs": "node ./scripts/copylibs.js",
-    "install": "npm install && copylibs",
+    "init": "npm install && npm run copylibs",
     "build": "tsc-plus --reorderFiles && node ./scripts/build.js",
     "server": "cd ./dist && live-server"
   },

@@ -8,8 +8,9 @@ namespace hanyeah.elec {
       super(main);
     }
 
-    addTerminal(x: number, y: number) {
-      const terminal: Terminal = new Terminal();
+    public addTerminal(x: number, y: number) {
+      const terminal: Terminal = new Terminal(this.main);
+      terminal.eq = this;
       terminal.x = x;
       terminal.y = y;
       this.addChild(terminal);
