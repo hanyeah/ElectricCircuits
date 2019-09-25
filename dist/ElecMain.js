@@ -128,24 +128,6 @@ var hanyeah;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
- * Created by hanyeah on 2019/9/18.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var HObject = /** @class */ (function () {
-            function HObject() {
-                // private static TIME: number = new Date().getTime();
-                this.UID = HObject.COUNTING++;
-            }
-            HObject.COUNTING = 0;
-            return HObject;
-        }());
-        elec.HObject = HObject;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-/**
  * Created by hanyeah on 2019/9/21.
  */
 var hanyeah;
@@ -192,6 +174,24 @@ var hanyeah;
         elec.TwoTerminalEq = TwoTerminalEq;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var HObject = /** @class */ (function () {
+            function HObject() {
+                // private static TIME: number = new Date().getTime();
+                this.UID = HObject.COUNTING++;
+            }
+            HObject.COUNTING = 0;
+            return HObject;
+        }());
+        elec.HObject = HObject;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
 var hanyeah;
 (function (hanyeah) {
     var elec;
@@ -217,6 +217,89 @@ var hanyeah;
             return Resistance;
         }(elec.TwoTerminalEq));
         elec.Resistance = Resistance;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/25.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var KeyCode;
+        (function (KeyCode) {
+            KeyCode[KeyCode["enter"] = 13] = "enter";
+            KeyCode[KeyCode["esc"] = 27] = "esc";
+            KeyCode[KeyCode["backspace"] = 8] = "backspace";
+            KeyCode[KeyCode["tab"] = 9] = "tab";
+            KeyCode[KeyCode["shift"] = 16] = "shift";
+            KeyCode[KeyCode["ctrl"] = 17] = "ctrl";
+            KeyCode[KeyCode["alt"] = 18] = "alt";
+            KeyCode[KeyCode["space"] = 32] = "space";
+            KeyCode[KeyCode["pause"] = 19] = "pause";
+            KeyCode[KeyCode["pageup"] = 33] = "pageup";
+            KeyCode[KeyCode["pagedown"] = 34] = "pagedown";
+            KeyCode[KeyCode["end"] = 35] = "end";
+            KeyCode[KeyCode["home"] = 36] = "home";
+            KeyCode[KeyCode["left"] = 37] = "left";
+            KeyCode[KeyCode["up"] = 38] = "up";
+            KeyCode[KeyCode["right"] = 39] = "right";
+            KeyCode[KeyCode["down"] = 40] = "down";
+            KeyCode[KeyCode["insert"] = 45] = "insert";
+            KeyCode[KeyCode["delete"] = 46] = "delete";
+            KeyCode[KeyCode["f1"] = 112] = "f1";
+            KeyCode[KeyCode["f2"] = 113] = "f2";
+            KeyCode[KeyCode["f3"] = 114] = "f3";
+            KeyCode[KeyCode["f4"] = 115] = "f4";
+            KeyCode[KeyCode["f5"] = 116] = "f5";
+            KeyCode[KeyCode["f6"] = 117] = "f6";
+            KeyCode[KeyCode["f7"] = 118] = "f7";
+            KeyCode[KeyCode["f8"] = 119] = "f8";
+            KeyCode[KeyCode["f9"] = 120] = "f9";
+            KeyCode[KeyCode["f10"] = 121] = "f10";
+            KeyCode[KeyCode["f11"] = 122] = "f11";
+            KeyCode[KeyCode["f12"] = 123] = "f12";
+            KeyCode[KeyCode["dot"] = 190] = "dot";
+            KeyCode[KeyCode["dotnumpad"] = 110] = "dotnumpad";
+            KeyCode[KeyCode["coma"] = 188] = "coma";
+            KeyCode[KeyCode["comanumpad"] = 0] = "comanumpad";
+            KeyCode[KeyCode["a"] = 65] = "a";
+            KeyCode[KeyCode["b"] = 66] = "b";
+            KeyCode[KeyCode["c"] = 67] = "c";
+            KeyCode[KeyCode["d"] = 68] = "d";
+            KeyCode[KeyCode["e"] = 69] = "e";
+            KeyCode[KeyCode["f"] = 70] = "f";
+            KeyCode[KeyCode["g"] = 71] = "g";
+            KeyCode[KeyCode["h"] = 72] = "h";
+            KeyCode[KeyCode["i"] = 73] = "i";
+            KeyCode[KeyCode["j"] = 74] = "j";
+            KeyCode[KeyCode["k"] = 75] = "k";
+            KeyCode[KeyCode["l"] = 76] = "l";
+            KeyCode[KeyCode["m"] = 77] = "m";
+            KeyCode[KeyCode["n"] = 78] = "n";
+            KeyCode[KeyCode["o"] = 79] = "o";
+            KeyCode[KeyCode["p"] = 80] = "p";
+            KeyCode[KeyCode["q"] = 81] = "q";
+            KeyCode[KeyCode["r"] = 82] = "r";
+            KeyCode[KeyCode["s"] = 83] = "s";
+            KeyCode[KeyCode["t"] = 84] = "t";
+            KeyCode[KeyCode["u"] = 85] = "u";
+            KeyCode[KeyCode["v"] = 86] = "v";
+            KeyCode[KeyCode["w"] = 87] = "w";
+            KeyCode[KeyCode["x"] = 88] = "x";
+            KeyCode[KeyCode["y"] = 89] = "y";
+            KeyCode[KeyCode["z"] = 90] = "z";
+            KeyCode[KeyCode["zero"] = 48] = "zero";
+            KeyCode[KeyCode["one"] = 49] = "one";
+            KeyCode[KeyCode["two"] = 50] = "two";
+            KeyCode[KeyCode["three"] = 51] = "three";
+            KeyCode[KeyCode["four"] = 52] = "four";
+            KeyCode[KeyCode["five"] = 53] = "five";
+            KeyCode[KeyCode["six"] = 54] = "six";
+            KeyCode[KeyCode["seven"] = 55] = "seven";
+            KeyCode[KeyCode["eight"] = 56] = "eight";
+            KeyCode[KeyCode["nine"] = 57] = "nine";
+        })(KeyCode = elec.KeyCode || (elec.KeyCode = {}));
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -289,6 +372,18 @@ var hanyeah;
              */
             PluginBase.prototype.onRightClick = function (e) {
             };
+            /**
+             * 键盘按下事件
+             * @param e
+             */
+            PluginBase.prototype.onKeyDown = function (e, keyMap) {
+            };
+            /**
+             * 键盘弹起事件
+             * @param e
+             */
+            PluginBase.prototype.onKeyUp = function (e, keyMap) {
+            };
             PluginBase.prototype.global2view = function (p) {
                 return this.main.viewStack.toLocal(p);
             };
@@ -326,6 +421,29 @@ var hanyeah;
         elec.RedoUndo = RedoUndo;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var ViewStack = /** @class */ (function (_super) {
+            __extends(ViewStack, _super);
+            function ViewStack(main) {
+                var _this = _super.call(this, main) || this;
+                _this.interactive = true;
+                _this.eqLayer = new elec.EqLayer(_this.main);
+                _this.addChild(_this.eqLayer);
+                _this.assistLayer = new elec.Container(_this.main);
+                _this.addChild(_this.assistLayer);
+                return _this;
+            }
+            return ViewStack;
+        }(elec.Container));
+        elec.ViewStack = ViewStack;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
 var hanyeah;
 (function (hanyeah) {
     var elec;
@@ -361,6 +479,10 @@ var hanyeah;
                 _this.pluginManager.registerPlugin(new elec.ZoomPlugin(_this));
                 _this.pluginManager.registerPlugin(new elec.HotkeyPlugin(_this));
                 _this.pluginManager.registerPlugin(new elec.DrawWirePlugin(_this));
+                var hotkeyPlugin = new elec.HotkeyPlugin(_this);
+                _this.pluginManager.registerPlugin(hotkeyPlugin);
+                hotkeyPlugin.registerHotKey("delete", _this.deleteSelects, _this);
+                hotkeyPlugin.registerHotKey("ctrl+a", _this.selectAll, _this);
                 _this.resized();
                 _this.addEq("Battery", new Point(500, 300));
                 _this.addEq("Resistance", new Point(200, 300));
@@ -552,192 +674,6 @@ var hanyeah;
         }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/22.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var HitArea = /** @class */ (function () {
-            function HitArea(con, x, y) {
-                this.r = 10;
-                var gra = new PIXI.Graphics();
-                gra.beginFill(0xff0000, 0.3);
-                gra.drawCircle(x, y, this.r);
-                gra.endFill();
-                con.addChild(gra);
-                this.x = x;
-                this.y = y;
-            }
-            HitArea.prototype.contains = function (x, y) {
-                var dx = x - this.x;
-                var dy = y - this.y;
-                return dx * dx + dy * dy < this.r * this.r;
-            };
-            return HitArea;
-        }());
-        elec.HitArea = HitArea;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/20.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Point = PIXI.Point;
-        var Terminal = /** @class */ (function (_super) {
-            __extends(Terminal, _super);
-            function Terminal(main) {
-                var _this = _super.call(this, main) || this;
-                _this.UID = elec.MathUtil.getUID();
-                _this.interactive = true;
-                _this.hitArea = new TerminalHItArea();
-                var gra = new PIXI.Graphics();
-                _this.addChild(gra);
-                gra.beginFill(0xff0000, 0.2);
-                gra.drawCircle(0, 0, 5);
-                gra.endFill();
-                return _this;
-            }
-            Object.defineProperty(Terminal.prototype, "leader", {
-                get: function () {
-                    return this._leader;
-                },
-                set: function (value) {
-                    this.disConnect();
-                    this._leader = value;
-                    if (value) {
-                        this.connect(value);
-                    }
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Terminal.prototype.destroy = function () {
-                this.leader = null;
-                _super.prototype.destroy.call(this);
-            };
-            Terminal.prototype.update = function () {
-                if (this.leader && this.parent) {
-                    this.setPosition(this.parent.toLocal(new Point(), this.leader));
-                }
-            };
-            Terminal.prototype.setPosition = function (p) {
-                this.setPosition2(p.x, p.y);
-            };
-            Terminal.prototype.setPosition2 = function (x, y) {
-                this.x = x;
-                this.y = y;
-            };
-            Terminal.prototype.getData = function () {
-                var obj = {};
-                obj.UID = this.UID;
-                if (this.leader) {
-                    obj.leader = this.leader.UID;
-                }
-                return obj;
-            };
-            Terminal.prototype.setData = function (obj) {
-                this.UID = obj.UID;
-                if (obj.leader) {
-                    // this.main
-                }
-            };
-            Terminal.prototype.connect = function (terminal) {
-                if (this.vertex && terminal.vertex) {
-                    this.vertex.connect(terminal.vertex);
-                }
-            };
-            Terminal.prototype.disConnect = function () {
-                if (this.vertex) {
-                    this.vertex.disConnect();
-                }
-            };
-            return Terminal;
-        }(elec.Container));
-        elec.Terminal = Terminal;
-        var TerminalHItArea = /** @class */ (function () {
-            function TerminalHItArea() {
-                this.r = 10;
-            }
-            TerminalHItArea.prototype.contains = function (x, y) {
-                return x * x + y * y < this.r * this.r;
-            };
-            return TerminalHItArea;
-        }());
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Battery = /** @class */ (function (_super) {
-            __extends(Battery, _super);
-            function Battery(main) {
-                var _this = _super.call(this, main) || this;
-                _this.SU = 1.5;
-                _this.className = "Battery";
-                _this.edge.SU = _this.SU;
-                return _this;
-            }
-            Battery.prototype.initSkin = function () {
-                var gra = new PIXI.Graphics();
-                gra.beginFill(0x000000, 1.0);
-                gra.drawRect(-50, -20, 100, 40);
-                gra.drawRect(50, -5, 4, 10);
-                gra.endFill();
-                this.addChild(gra);
-            };
-            return Battery;
-        }(elec.TwoTerminalEq));
-        elec.Battery = Battery;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/22.
- */
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Graphics = PIXI.Graphics;
-        var Bulb = /** @class */ (function (_super) {
-            __extends(Bulb, _super);
-            function Bulb(main) {
-                return _super.call(this, main) || this;
-            }
-            Bulb.prototype.initSkin = function () {
-                var light = new Graphics();
-                light.beginFill(0xffff00, 1.0);
-                light.drawCircle(0, 0, 30);
-                light.endFill();
-                this.light = light;
-                this.addChild(light);
-                var gra = new Graphics();
-                gra.lineStyle(6, 0x000000, 1.0);
-                gra.drawCircle(0, 0, 30);
-                gra.moveTo(21, 21);
-                gra.lineTo(-21, -21);
-                gra.moveTo(-21, 21);
-                gra.lineTo(21, -21);
-                gra.moveTo(-50, 0);
-                gra.lineTo(-30, 0);
-                gra.moveTo(50, 0);
-                gra.lineTo(30, 0);
-                this.addChild(gra);
-            };
-            Bulb.prototype.update = function (dt) {
-                _super.prototype.update.call(this, dt);
-                this.light.alpha = this.I === 0.0 ? 0 : 1.0;
-            };
-            return Bulb;
-        }(elec.Resistance));
-        elec.Bulb = Bulb;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
 var hanyeah;
 (function (hanyeah) {
     var elec;
@@ -891,26 +827,31 @@ var hanyeah;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
- * Created by hanyeah on 2019/9/18.
+ * Created by hanyeah on 2019/9/22.
  */
 var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
-        var ViewStack = /** @class */ (function (_super) {
-            __extends(ViewStack, _super);
-            function ViewStack(main) {
-                var _this = _super.call(this, main) || this;
-                _this.interactive = true;
-                _this.eqLayer = new elec.EqLayer(_this.main);
-                _this.addChild(_this.eqLayer);
-                _this.assistLayer = new elec.Container(_this.main);
-                _this.addChild(_this.assistLayer);
-                return _this;
+        var HitArea = /** @class */ (function () {
+            function HitArea(con, x, y) {
+                this.r = 10;
+                var gra = new PIXI.Graphics();
+                gra.beginFill(0xff0000, 0.3);
+                gra.drawCircle(x, y, this.r);
+                gra.endFill();
+                con.addChild(gra);
+                this.x = x;
+                this.y = y;
             }
-            return ViewStack;
-        }(elec.Container));
-        elec.ViewStack = ViewStack;
+            HitArea.prototype.contains = function (x, y) {
+                var dx = x - this.x;
+                var dy = y - this.y;
+                return dx * dx + dy * dy < this.r * this.r;
+            };
+            return HitArea;
+        }());
+        elec.HitArea = HitArea;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 var hanyeah;
@@ -1041,14 +982,219 @@ var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
+        var KeyCode = hanyeah.elec.KeyCode;
         var HotkeyPlugin = /** @class */ (function (_super) {
             __extends(HotkeyPlugin, _super);
             function HotkeyPlugin(main) {
-                return _super.call(this, main) || this;
+                var _this = _super.call(this, main) || this;
+                _this.hotkeys = {};
+                return _this;
             }
+            HotkeyPlugin.prototype.destroy = function () {
+                for (var hotkey in this.hotkeys) {
+                    if (this.hotkeys.hasOwnProperty(hotkey)) {
+                        this.hotkeys[hotkey].destroy();
+                    }
+                }
+                this.hotkeys = null;
+                _super.prototype.destroy.call(this);
+            };
+            HotkeyPlugin.prototype.registerHotKey = function (hotkey, command, context) {
+                if (!this.hotkeys[hotkey]) {
+                    this.hotkeys[hotkey] = new HotKeyItem(hotkey, command, context);
+                }
+            };
+            HotkeyPlugin.prototype.unRegisterHotKey = function (hotkey) {
+                var item = this.hotkeys[hotkey];
+                if (item) {
+                    item.destroy();
+                    delete this.hotkeys[hotkey];
+                }
+            };
+            /**
+             * 键盘按下事件
+             * @param e
+             */
+            HotkeyPlugin.prototype.onKeyDown = function (e, keyMap) {
+                this.calculate(e.keyCode, keyMap);
+            };
+            /**
+             * 键盘弹起事件
+             * @param e
+             */
+            HotkeyPlugin.prototype.onKeyUp = function (e, keyMap) {
+            };
+            HotkeyPlugin.prototype.calculate = function (keyCode, keyMap) {
+                for (var hotkey in this.hotkeys) {
+                    if (this.hotkeys.hasOwnProperty(hotkey)) {
+                        var item = this.hotkeys[hotkey];
+                        if (item.match(keyCode, keyMap)) {
+                            item.execute();
+                            break;
+                        }
+                    }
+                }
+            };
             return HotkeyPlugin;
         }(elec.PluginBase));
         elec.HotkeyPlugin = HotkeyPlugin;
+        var HotKeyItem = /** @class */ (function () {
+            function HotKeyItem(hotkey, command, context) {
+                var _this = this;
+                this.hotkey = hotkey;
+                this.command = command;
+                this.context = context;
+                this.keyArr = [];
+                var a = hotkey.split("+");
+                a.forEach(function (s) {
+                    if (s && s !== "") {
+                        _this.keyArr.push(s.toLowerCase());
+                    }
+                });
+            }
+            HotKeyItem.prototype.destroy = function () {
+                this.hotkey = null;
+                this.command = null;
+                this.context = null;
+                this.keyArr = null;
+            };
+            HotKeyItem.prototype.match = function (keyCode, keyMap) {
+                var hasKeyCode = false;
+                var hasHotKey = true;
+                for (var i = 0; i < this.keyArr.length; i++) {
+                    var s = this.keyArr[i];
+                    var code = KeyCode[s];
+                    if (!keyMap[code]) {
+                        hasHotKey = false;
+                        break;
+                    }
+                    if (keyCode === code) {
+                        hasKeyCode = true;
+                    }
+                }
+                return hasKeyCode && hasHotKey;
+            };
+            HotKeyItem.prototype.execute = function () {
+                this.command.call(this.context);
+            };
+            return HotKeyItem;
+        }());
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Point = PIXI.Point;
+        var Terminal = /** @class */ (function (_super) {
+            __extends(Terminal, _super);
+            function Terminal(main) {
+                var _this = _super.call(this, main) || this;
+                _this.UID = elec.MathUtil.getUID();
+                _this.interactive = true;
+                _this.hitArea = new TerminalHItArea();
+                var gra = new PIXI.Graphics();
+                _this.addChild(gra);
+                gra.beginFill(0xff0000, 0.2);
+                gra.drawCircle(0, 0, 5);
+                gra.endFill();
+                return _this;
+            }
+            Object.defineProperty(Terminal.prototype, "leader", {
+                get: function () {
+                    return this._leader;
+                },
+                set: function (value) {
+                    this.disConnect();
+                    this._leader = value;
+                    if (value) {
+                        this.connect(value);
+                    }
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Terminal.prototype.destroy = function () {
+                this.leader = null;
+                _super.prototype.destroy.call(this);
+            };
+            Terminal.prototype.update = function () {
+                if (this.leader && this.parent) {
+                    this.setPosition(this.parent.toLocal(new Point(), this.leader));
+                }
+            };
+            Terminal.prototype.setPosition = function (p) {
+                this.setPosition2(p.x, p.y);
+            };
+            Terminal.prototype.setPosition2 = function (x, y) {
+                this.x = x;
+                this.y = y;
+            };
+            Terminal.prototype.getData = function () {
+                var obj = {};
+                obj.UID = this.UID;
+                if (this.leader) {
+                    obj.leader = this.leader.UID;
+                }
+                return obj;
+            };
+            Terminal.prototype.setData = function (obj) {
+                this.UID = obj.UID;
+                if (obj.leader) {
+                    // this.main
+                }
+            };
+            Terminal.prototype.connect = function (terminal) {
+                if (this.vertex && terminal.vertex) {
+                    this.vertex.connect(terminal.vertex);
+                }
+            };
+            Terminal.prototype.disConnect = function () {
+                if (this.vertex) {
+                    this.vertex.disConnect();
+                }
+            };
+            return Terminal;
+        }(elec.Container));
+        elec.Terminal = Terminal;
+        var TerminalHItArea = /** @class */ (function () {
+            function TerminalHItArea() {
+                this.r = 10;
+            }
+            TerminalHItArea.prototype.contains = function (x, y) {
+                return x * x + y * y < this.r * this.r;
+            };
+            return TerminalHItArea;
+        }());
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Battery = /** @class */ (function (_super) {
+            __extends(Battery, _super);
+            function Battery(main) {
+                var _this = _super.call(this, main) || this;
+                _this.SU = 1.5;
+                _this.className = "Battery";
+                _this.edge.SU = _this.SU;
+                return _this;
+            }
+            Battery.prototype.initSkin = function () {
+                var gra = new PIXI.Graphics();
+                gra.beginFill(0x000000, 1.0);
+                gra.drawRect(-50, -20, 100, 40);
+                gra.drawRect(50, -5, 4, 10);
+                gra.endFill();
+                this.addChild(gra);
+            };
+            return Battery;
+        }(elec.TwoTerminalEq));
+        elec.Battery = Battery;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -1062,9 +1208,22 @@ var hanyeah;
             function PluginManager(main) {
                 var _this = this;
                 this.plugins = [];
+                this.keyMap = {};
                 this.mouseWheelHandler = function (e) {
                     _this.plugins.forEach(function (plugin) {
                         plugin.onMouseWheel(e);
+                    });
+                };
+                this.keyDownHandler = function (e) {
+                    _this.keyMap[e.keyCode] = true;
+                    _this.plugins.forEach(function (plugin) {
+                        plugin.onKeyDown(e, _this.keyMap);
+                    });
+                };
+                this.keyUpHandler = function (e) {
+                    _this.keyMap[e.keyCode] = false;
+                    _this.plugins.forEach(function (plugin) {
+                        plugin.onKeyUp(e, _this.keyMap);
                     });
                 };
                 this.main = main;
@@ -1074,6 +1233,8 @@ var hanyeah;
                 this.main.stage.addListener("pointerupoutside", this.mouseUpHandler, this);
                 this.main.stage.addListener("pointertap", this.clickHandler, this);
                 this.main.canvas.addEventListener("mousewheel", this.mouseWheelHandler);
+                this.main.canvas.addEventListener("keydown", this.keyDownHandler);
+                this.main.canvas.addEventListener("keyup", this.keyUpHandler);
             }
             PluginManager.prototype.destroy = function () {
                 this.main.stage.removeListener("pointerdown", this.mouseDownHandler, this);
@@ -1082,6 +1243,8 @@ var hanyeah;
                 this.main.stage.removeListener("pointerupoutside", this.mouseUpHandler, this);
                 this.main.stage.removeListener("pointertap", this.clickHandler, this);
                 this.main.canvas.removeEventListener("mousewheel", this.mouseWheelHandler);
+                this.main.canvas.removeEventListener("keydown", this.keyDownHandler);
+                this.main.canvas.removeEventListener("keyup", this.keyUpHandler);
                 for (var i = 0; i < this.plugins.length; i++) {
                     this.plugins[i].destroy();
                 }
@@ -1338,6 +1501,48 @@ var hanyeah;
             return CommandAddEq;
         }(elec.RedoUndo));
         elec.CommandAddEq = CommandAddEq;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Graphics = PIXI.Graphics;
+        var Bulb = /** @class */ (function (_super) {
+            __extends(Bulb, _super);
+            function Bulb(main) {
+                return _super.call(this, main) || this;
+            }
+            Bulb.prototype.initSkin = function () {
+                var light = new Graphics();
+                light.beginFill(0xffff00, 1.0);
+                light.drawCircle(0, 0, 30);
+                light.endFill();
+                this.light = light;
+                this.addChild(light);
+                var gra = new Graphics();
+                gra.lineStyle(6, 0x000000, 1.0);
+                gra.drawCircle(0, 0, 30);
+                gra.moveTo(21, 21);
+                gra.lineTo(-21, -21);
+                gra.moveTo(-21, 21);
+                gra.lineTo(21, -21);
+                gra.moveTo(-50, 0);
+                gra.lineTo(-30, 0);
+                gra.moveTo(50, 0);
+                gra.lineTo(30, 0);
+                this.addChild(gra);
+            };
+            Bulb.prototype.update = function (dt) {
+                _super.prototype.update.call(this, dt);
+                this.light.alpha = this.I === 0.0 ? 0 : 1.0;
+            };
+            return Bulb;
+        }(elec.Resistance));
+        elec.Bulb = Bulb;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**

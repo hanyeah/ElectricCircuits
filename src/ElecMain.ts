@@ -7,14 +7,14 @@ namespace hanyeah.elec {
   export class ElecMain extends HObject {
 
     public world: World;
-    public app: PIXI.Application;
     public canvas: HTMLCanvasElement;
+    public app: PIXI.Application;
     public stage: PIXI.Container;
-    public bg: PIXI.Graphics;
     public viewStack: ViewStack;
     public pluginManager: PluginManager;
-    private selects: EqBase[] = [];
     private ticker: PIXI.ticker.Ticker;
+    private selects: EqBase[] = [];
+
 
     constructor(canvas: HTMLCanvasElement) {
       super();
@@ -41,6 +41,10 @@ namespace hanyeah.elec {
       this.pluginManager.registerPlugin(new ZoomPlugin(this));
       this.pluginManager.registerPlugin(new HotkeyPlugin(this));
       this.pluginManager.registerPlugin(new DrawWirePlugin(this));
+      const hotkeyPlugin: HotkeyPlugin = new HotkeyPlugin(this);
+      this.pluginManager.registerPlugin(hotkeyPlugin);
+      hotkeyPlugin.registerHotKey("delete", this.deleteSelects, this);
+      hotkeyPlugin.registerHotKey("ctrl+a", this.selectAll, this);
 
       this.resized();
 
@@ -211,30 +215,6 @@ namespace hanyeah.elec {
 
     public global2view(p: Point): Point {
       return this.viewStack.toLocal(p);
-    }
-
-    public getFriend(eq: TwoTerminalEq): TwoTerminalEq[] {
-      const vertex0: Vertex = this.getRootVertex(eq.terminal0);
-      const vertex1: Vertex = this.getRootVertex(eq.terminal1);
-      const arr: TwoTerminalEq[] = [];
-      this.forEachEq((eq0: EqBase) => {
-        if (eq0 instanceof TwoTerminalEq) {
-          const v00: Vertex = this.getRootVertex((eq0 as TwoTerminalEq).terminal0);
-          const v01: Vertex = this.getRootVertex((eq0 as TwoTerminalEq).terminal1);
-          if (v00 === vertex0
-            || v00 === vertex1
-            || v01 === vertex0
-            || v01 === vertex1
-        ) {
-            arr.push(eq0);
-          }
-        }
-      });
-      return arr;
-    }
-
-    private getRootVertex(terminal: Terminal): Vertex{
-      return terminal.vertex.connUFS.root.userData as Vertex;
     }
 
   }

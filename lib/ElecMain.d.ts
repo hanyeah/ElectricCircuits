@@ -39,16 +39,6 @@ declare namespace hanyeah.elec {
     }
 }
 /**
- * Created by hanyeah on 2019/9/18.
- */
-declare namespace hanyeah.elec {
-    class HObject {
-        private static COUNTING;
-        UID: number;
-        constructor();
-    }
-}
-/**
  * Created by hanyeah on 2019/9/21.
  */
 declare namespace hanyeah.elec {
@@ -64,10 +54,98 @@ declare namespace hanyeah.elec {
         setData(obj: any): void;
     }
 }
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class HObject {
+        private static COUNTING;
+        UID: number;
+        constructor();
+    }
+}
 declare namespace hanyeah.elec {
     class Resistance extends TwoTerminalEq {
         constructor(main: ElecMain);
         initSkin(): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/25.
+ */
+declare namespace hanyeah.elec {
+    enum KeyCode {
+        enter = 13,
+        esc = 27,
+        backspace = 8,
+        tab = 9,
+        shift = 16,
+        ctrl = 17,
+        alt = 18,
+        space = 32,
+        pause = 19,
+        pageup = 33,
+        pagedown = 34,
+        end = 35,
+        home = 36,
+        left = 37,
+        up = 38,
+        right = 39,
+        down = 40,
+        insert = 45,
+        delete = 46,
+        f1 = 112,
+        f2 = 113,
+        f3 = 114,
+        f4 = 115,
+        f5 = 116,
+        f6 = 117,
+        f7 = 118,
+        f8 = 119,
+        f9 = 120,
+        f10 = 121,
+        f11 = 122,
+        f12 = 123,
+        dot = 190,
+        dotnumpad = 110,
+        coma = 188,
+        comanumpad = 0,
+        a = 65,
+        b = 66,
+        c = 67,
+        d = 68,
+        e = 69,
+        f = 70,
+        g = 71,
+        h = 72,
+        i = 73,
+        j = 74,
+        k = 75,
+        l = 76,
+        m = 77,
+        n = 78,
+        o = 79,
+        p = 80,
+        q = 81,
+        r = 82,
+        s = 83,
+        t = 84,
+        u = 85,
+        v = 86,
+        w = 87,
+        x = 88,
+        y = 89,
+        z = 90,
+        zero = 48,
+        one = 49,
+        two = 50,
+        three = 51,
+        four = 52,
+        five = 53,
+        six = 54,
+        seven = 55,
+        eight = 56,
+        nine = 57
     }
 }
 /**
@@ -122,6 +200,16 @@ declare namespace hanyeah.elec {
          * @param e
          */
         onRightClick(e: InteractionEvent): void;
+        /**
+         * 键盘按下事件
+         * @param e
+         */
+        onKeyDown(e: KeyboardEvent, keyMap: any): void;
+        /**
+         * 键盘弹起事件
+         * @param e
+         */
+        onKeyUp(e: KeyboardEvent, keyMap: any): void;
         global2view(p: Point): Point;
     }
 }
@@ -137,6 +225,16 @@ declare namespace hanyeah.elec {
         redo(): void;
         undo(): void;
         getData(): any;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class ViewStack extends Container {
+        eqLayer: EqLayer;
+        assistLayer: Container;
+        constructor(main: ElecMain);
     }
 }
 declare namespace hanyeah.elec {
@@ -177,59 +275,6 @@ declare namespace hanyeah.elec {
         global2view(p: Point): Point;
         getFriend(eq: TwoTerminalEq): TwoTerminalEq[];
         private getRootVertex;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/22.
- */
-declare namespace hanyeah.elec {
-    class HitArea implements PIXI.IHitArea {
-        r: number;
-        x: number;
-        y: number;
-        constructor(con: PIXI.Container, x: number, y: number);
-        contains(x: number, y: number): boolean;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/20.
- */
-declare namespace hanyeah.elec {
-    import Point = PIXI.Point;
-    import Vertex = hanyeah.electricity.elecData.Vertex;
-    class Terminal extends Container {
-        UID: number;
-        leader: Terminal;
-        eq: EqBase;
-        vertex: Vertex;
-        private _leader;
-        constructor(main: ElecMain);
-        destroy(): void;
-        update(): void;
-        setPosition(p: Point): void;
-        setPosition2(x: number, y: number): void;
-        getData(): any;
-        setData(obj: any): void;
-        private connect;
-        private disConnect;
-    }
-}
-declare namespace hanyeah.elec {
-    class Battery extends TwoTerminalEq {
-        SU: number;
-        constructor(main: ElecMain);
-        initSkin(): void;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/22.
- */
-declare namespace hanyeah.elec {
-    class Bulb extends Resistance {
-        private light;
-        constructor(main: ElecMain);
-        initSkin(): void;
-        update(dt: number): void;
     }
 }
 declare namespace hanyeah.elec {
@@ -280,13 +325,15 @@ declare namespace hanyeah.elec {
     }
 }
 /**
- * Created by hanyeah on 2019/9/18.
+ * Created by hanyeah on 2019/9/22.
  */
 declare namespace hanyeah.elec {
-    class ViewStack extends Container {
-        eqLayer: EqLayer;
-        assistLayer: Container;
-        constructor(main: ElecMain);
+    class HitArea implements PIXI.IHitArea {
+        r: number;
+        x: number;
+        y: number;
+        constructor(con: PIXI.Container, x: number, y: number);
+        contains(x: number, y: number): boolean;
     }
 }
 declare namespace hanyeah.elec {
@@ -318,7 +365,52 @@ declare namespace hanyeah.elec {
  */
 declare namespace hanyeah.elec {
     class HotkeyPlugin extends PluginBase {
+        private hotkeys;
         constructor(main: ElecMain);
+        destroy(): void;
+        registerHotKey(hotkey: string, command: Function, context?: any): void;
+        unRegisterHotKey(hotkey: string): void;
+        /**
+         * 键盘按下事件
+         * @param e
+         */
+        onKeyDown(e: KeyboardEvent, keyMap: any): void;
+        /**
+         * 键盘弹起事件
+         * @param e
+         */
+        onKeyUp(e: KeyboardEvent, keyMap: any): void;
+        private calculate;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    import Vertex = hanyeah.electricity.elecData.Vertex;
+    class Terminal extends Container {
+        UID: number;
+        leader: Terminal;
+        eq: EqBase;
+        vertex: Vertex;
+        private _leader;
+        constructor(main: ElecMain);
+        destroy(): void;
+        update(): void;
+        setPosition(p: Point): void;
+        setPosition2(x: number, y: number): void;
+        getData(): any;
+        setData(obj: any): void;
+        private connect;
+        private disConnect;
+    }
+}
+declare namespace hanyeah.elec {
+    class Battery extends TwoTerminalEq {
+        SU: number;
+        constructor(main: ElecMain);
+        initSkin(): void;
     }
 }
 /**
@@ -328,6 +420,7 @@ declare namespace hanyeah.elec {
     class PluginManager {
         private main;
         private plugins;
+        private keyMap;
         constructor(main: ElecMain);
         destroy(): void;
         registerPlugin(plugin: PluginBase): void;
@@ -335,8 +428,10 @@ declare namespace hanyeah.elec {
         private mouseDownHandler;
         private mouseMoveHandler;
         private mouseUpHandler;
-        private mouseWheelHandler;
         private clickHandler;
+        private mouseWheelHandler;
+        private keyDownHandler;
+        private keyUpHandler;
     }
 }
 /**
@@ -391,6 +486,17 @@ declare namespace hanyeah.elec {
         redo(): void;
         undo(): void;
         getData(): any;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+declare namespace hanyeah.elec {
+    class Bulb extends Resistance {
+        private light;
+        constructor(main: ElecMain);
+        initSkin(): void;
+        update(dt: number): void;
     }
 }
 /**

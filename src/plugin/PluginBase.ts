@@ -75,6 +75,22 @@ namespace hanyeah.elec{
     public onRightClick(e: InteractionEvent) {
     }
 
+    /**
+     * 键盘按下事件
+     * @param e
+     */
+    public onKeyDown(e: KeyboardEvent, keyMap: any) {
+
+    }
+
+    /**
+     * 键盘弹起事件
+     * @param e
+     */
+    public onKeyUp(e: KeyboardEvent, keyMap: any) {
+
+    }
+
     public global2view(p: Point): Point {
       return this.main.viewStack.toLocal(p);
     }

@@ -7,6 +7,7 @@ namespace hanyeah.elec{
   export class PluginManager{
     private main: ElecMain;
     private plugins: PluginBase[] = [];
+    private keyMap: any = {};
     constructor(main: ElecMain) {
       this.main = main;
       this.main.stage.addListener("pointerdown", this.mouseDownHandler, this);
@@ -15,6 +16,8 @@ namespace hanyeah.elec{
       this.main.stage.addListener("pointerupoutside", this.mouseUpHandler, this);
       this.main.stage.addListener("pointertap", this.clickHandler, this);
       this.main.canvas.addEventListener("mousewheel", this.mouseWheelHandler);
+      this.main.canvas.addEventListener("keydown", this.keyDownHandler);
+      this.main.canvas.addEventListener("keyup", this.keyUpHandler);
     }
 
     public destroy() {
@@ -24,6 +27,8 @@ namespace hanyeah.elec{
       this.main.stage.removeListener("pointerupoutside", this.mouseUpHandler, this);
       this.main.stage.removeListener("pointertap", this.clickHandler, this);
       this.main.canvas.removeEventListener("mousewheel", this.mouseWheelHandler);
+      this.main.canvas.removeEventListener("keydown", this.keyDownHandler);
+      this.main.canvas.removeEventListener("keyup", this.keyUpHandler);
       for (let i: number = 0; i < this.plugins.length; i++) {
         this.plugins[i].destroy();
       }
@@ -73,12 +78,6 @@ namespace hanyeah.elec{
       });
     }
 
-    private mouseWheelHandler = (e: MouseWheelEvent) => {
-      this.plugins.forEach((plugin: PluginBase) => {
-        plugin.onMouseWheel(e);
-      });
-    };
-
     private clickHandler(e: InteractionEvent) {
       this.plugins.forEach((plugin: PluginBase) => {
         if (e.data.button === 0) {
@@ -88,6 +87,26 @@ namespace hanyeah.elec{
         }
       });
     }
+
+    private mouseWheelHandler = (e: MouseWheelEvent) => {
+      this.plugins.forEach((plugin: PluginBase) => {
+        plugin.onMouseWheel(e);
+      });
+    };
+
+    private keyDownHandler = (e: KeyboardEvent) => {
+      this.keyMap[e.keyCode] = true;
+      this.plugins.forEach((plugin: PluginBase) => {
+        plugin.onKeyDown(e, this.keyMap);
+      });
+    };
+
+    private keyUpHandler = (e: KeyboardEvent) => {
+      this.keyMap[e.keyCode] = false;
+      this.plugins.forEach((plugin: PluginBase) => {
+        plugin.onKeyUp(e, this.keyMap);
+      });
+    };
 
   }
 }

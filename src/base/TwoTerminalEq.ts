@@ -44,6 +44,7 @@ namespace hanyeah.elec {
     public setData(obj: any) {
       super.setData(obj);
       this.terminal0.setData(obj.terminal0);
+      this.terminal1.setData(obj.terminal1);
     }
 
   }
