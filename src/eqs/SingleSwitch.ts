@@ -9,6 +9,10 @@ namespace hanyeah.elec{
       this.className = "SingleSwitch";
       this.isBreak = true;
       this.edge.isBreak = this.isBreak;
+    }
+
+    public init() {
+      super.init();
       this.knife.addListener("pointertap", this.toggleOpen, this);
     }
 

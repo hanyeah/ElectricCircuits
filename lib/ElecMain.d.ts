@@ -20,6 +20,7 @@ declare namespace hanyeah.elec {
     class EqBase extends Container {
         isSelect: boolean;
         constructor(main: ElecMain);
+        init(): void;
         destroy(): void;
         initSkin(): void;
         initPlugin(): void;
@@ -35,7 +36,6 @@ declare namespace hanyeah.elec {
         R: number;
         isBreak: boolean;
         constructor(main: ElecMain);
-        addTerminal(x: number, y: number): Terminal;
     }
 }
 /**
@@ -50,6 +50,7 @@ declare namespace hanyeah.elec {
         constructor(main: ElecMain);
         destroy(): void;
         update(dt: number): void;
+        addTerminal(x: number, y: number): Terminal;
         getData(): any;
         setData(obj: any): void;
     }
@@ -68,6 +69,17 @@ declare namespace hanyeah.elec {
     class Resistance extends TwoTerminalEq {
         constructor(main: ElecMain);
         initSkin(): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/26.
+ */
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    class RouterBase {
+        vertexs: Point[];
+        constructor(vertexs: Point[]);
+        addVertex(vertex: Point): void;
     }
 }
 /**
@@ -227,54 +239,14 @@ declare namespace hanyeah.elec {
         getData(): any;
     }
 }
-/**
- * Created by hanyeah on 2019/9/18.
- */
 declare namespace hanyeah.elec {
-    class ViewStack extends Container {
-        eqLayer: EqLayer;
-        assistLayer: Container;
+    import InteractionEvent = PIXI.interaction.InteractionEvent;
+    class DragPlugin extends PluginBase {
         constructor(main: ElecMain);
-    }
-}
-declare namespace hanyeah.elec {
-    import Point = PIXI.Point;
-    import Rectangle = PIXI.Rectangle;
-    import World = hanyeah.electricity.World;
-    class ElecMain extends HObject {
-        world: World;
-        app: PIXI.Application;
-        canvas: HTMLCanvasElement;
-        stage: PIXI.Container;
-        bg: PIXI.Graphics;
-        viewStack: ViewStack;
-        pluginManager: PluginManager;
-        private selects;
-        private ticker;
-        constructor(canvas: HTMLCanvasElement);
         destroy(): void;
-        update(deltaTime: any): void;
-        resized(): void;
-        startTicker(): void;
-        stopTicker(): void;
-        select(eqs: EqBase[], add: boolean): void;
-        addEq(className: string, p: Point): EqBase;
-        removeEq(eq: EqBase): void;
-        getEq(UID: number): EqBase;
-        moveSelectBy(dx: number, dy: number): void;
-        moveStageBy(dx: number, dy: number): void;
-        scaleBy(s: number, p: Point): void;
-        selectByRect(rect: Rectangle): void;
-        selectAll(): void;
-        deleteSelects(): void;
-        deleteAll(): void;
-        forEachEq(callBack: Function, inverted?: boolean): void;
-        getData(): any;
-        setData(obj: any): void;
-        getScale(): number;
-        global2view(p: Point): Point;
-        getFriend(eq: TwoTerminalEq): TwoTerminalEq[];
-        private getRootVertex;
+        onMouseDown(e: InteractionEvent): void;
+        onMouseMove(e: InteractionEvent): void;
+        onMouseUp(e: InteractionEvent): void;
     }
 }
 declare namespace hanyeah.elec {
@@ -283,6 +255,7 @@ declare namespace hanyeah.elec {
     class SingleSwitch extends TwoTerminalEq {
         knife: Graphics;
         constructor(main: ElecMain);
+        init(): void;
         initSkin(): void;
         update(dt: number): void;
         toggleOpen(e: InteractionEvent): void;
@@ -325,6 +298,16 @@ declare namespace hanyeah.elec {
     }
 }
 /**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class ViewStack extends Container {
+        eqLayer: EqLayer;
+        assistLayer: Container;
+        constructor(main: ElecMain);
+    }
+}
+/**
  * Created by hanyeah on 2019/9/22.
  */
 declare namespace hanyeah.elec {
@@ -334,16 +317,6 @@ declare namespace hanyeah.elec {
         y: number;
         constructor(con: PIXI.Container, x: number, y: number);
         contains(x: number, y: number): boolean;
-    }
-}
-declare namespace hanyeah.elec {
-    import InteractionEvent = PIXI.interaction.InteractionEvent;
-    class DragPlugin extends PluginBase {
-        constructor(main: ElecMain);
-        destroy(): void;
-        onMouseDown(e: InteractionEvent): void;
-        onMouseMove(e: InteractionEvent): void;
-        onMouseUp(e: InteractionEvent): void;
     }
 }
 /**
@@ -515,6 +488,54 @@ declare namespace hanyeah.elec {
         canRedo(): boolean;
         readonly currentUndoStep: number;
         readonly currentRedoStep: number;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/26.
+ */
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    class DirectRouter extends RouterBase {
+        constructor(vertexs: Point[]);
+        addVertex(vertex: Point): void;
+    }
+}
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    import Rectangle = PIXI.Rectangle;
+    import World = hanyeah.electricity.World;
+    class ElecMain extends HObject {
+        world: World;
+        canvas: HTMLCanvasElement;
+        app: PIXI.Application;
+        renderer: PIXI.SystemRenderer;
+        stage: PIXI.Container;
+        viewStack: ViewStack;
+        pluginManager: PluginManager;
+        private ticker;
+        private selects;
+        constructor(canvas: HTMLCanvasElement);
+        destroy(): void;
+        update(deltaTime: any): void;
+        resized(): void;
+        startTicker(): void;
+        stopTicker(): void;
+        select(eqs: EqBase[], add: boolean): void;
+        addEq(className: string, p: Point): EqBase;
+        removeEq(eq: EqBase): void;
+        getEq(UID: number): EqBase;
+        moveSelectBy(dx: number, dy: number): void;
+        moveStageBy(dx: number, dy: number): void;
+        scaleBy(s: number, p: Point): void;
+        selectByRect(rect: Rectangle): void;
+        selectAll(): void;
+        deleteSelects(): void;
+        deleteAll(): void;
+        forEachEq(callBack: Function, inverted?: boolean): void;
+        getData(): any;
+        setData(obj: any): void;
+        getScale(): number;
+        global2view(p: Point): Point;
     }
 }
 /**

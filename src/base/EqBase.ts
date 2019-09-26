@@ -4,9 +4,12 @@ namespace hanyeah.elec {
 
     constructor(main: ElecMain) {
       super(main);
+      this.interactive = true;
+    }
+
+    public init() {
       this.initSkin();
       this.initPlugin();
-      this.interactive = true;
     }
 
     public destroy() {

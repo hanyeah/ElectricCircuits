@@ -68,11 +68,13 @@ var hanyeah;
             function EqBase(main) {
                 var _this = _super.call(this, main) || this;
                 _this.isSelect = false;
-                _this.initSkin();
-                _this.initPlugin();
                 _this.interactive = true;
                 return _this;
             }
+            EqBase.prototype.init = function () {
+                this.initSkin();
+                this.initPlugin();
+            };
             EqBase.prototype.destroy = function () {
                 _super.prototype.destroy.call(this);
             };
@@ -114,14 +116,6 @@ var hanyeah;
                 _this.isBreak = false;
                 return _this;
             }
-            ElecEq.prototype.addTerminal = function (x, y) {
-                var terminal = new elec.Terminal(this.main);
-                terminal.eq = this;
-                terminal.x = x;
-                terminal.y = y;
-                this.addChild(terminal);
-                return terminal;
-            };
             return ElecEq;
         }(elec.EqBase));
         elec.ElecEq = ElecEq;
@@ -159,6 +153,14 @@ var hanyeah;
                 this.U = this.edge.U;
                 this.I = this.edge.I;
             };
+            TwoTerminalEq.prototype.addTerminal = function (x, y) {
+                var terminal = new elec.Terminal(this.main);
+                terminal.eq = this;
+                terminal.x = x;
+                terminal.y = y;
+                this.addChild(terminal);
+                return terminal;
+            };
             TwoTerminalEq.prototype.getData = function () {
                 var obj = _super.prototype.getData.call(this);
                 obj.terminal0 = this.terminal0.getData();
@@ -168,6 +170,7 @@ var hanyeah;
             TwoTerminalEq.prototype.setData = function (obj) {
                 _super.prototype.setData.call(this, obj);
                 this.terminal0.setData(obj.terminal0);
+                this.terminal1.setData(obj.terminal1);
             };
             return TwoTerminalEq;
         }(elec.ElecEq));
@@ -217,6 +220,24 @@ var hanyeah;
             return Resistance;
         }(elec.TwoTerminalEq));
         elec.Resistance = Resistance;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/26.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var RouterBase = /** @class */ (function () {
+            function RouterBase(vertexs) {
+                this.vertexs = vertexs;
+            }
+            RouterBase.prototype.addVertex = function (vertex) {
+            };
+            return RouterBase;
+        }());
+        elec.RouterBase = RouterBase;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -421,256 +442,58 @@ var hanyeah;
         elec.RedoUndo = RedoUndo;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
-/**
- * Created by hanyeah on 2019/9/18.
- */
 var hanyeah;
 (function (hanyeah) {
     var elec;
     (function (elec) {
-        var ViewStack = /** @class */ (function (_super) {
-            __extends(ViewStack, _super);
-            function ViewStack(main) {
-                var _this = _super.call(this, main) || this;
-                _this.interactive = true;
-                _this.eqLayer = new elec.EqLayer(_this.main);
-                _this.addChild(_this.eqLayer);
-                _this.assistLayer = new elec.Container(_this.main);
-                _this.addChild(_this.assistLayer);
-                return _this;
+        var DragPlugin = /** @class */ (function (_super) {
+            __extends(DragPlugin, _super);
+            function DragPlugin(main) {
+                return _super.call(this, main) || this;
             }
-            return ViewStack;
-        }(elec.Container));
-        elec.ViewStack = ViewStack;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var Point = PIXI.Point;
-        var Rectangle = PIXI.Rectangle;
-        var World = hanyeah.electricity.World;
-        var ElecMain = /** @class */ (function (_super) {
-            __extends(ElecMain, _super);
-            function ElecMain(canvas) {
-                var _this = _super.call(this) || this;
-                _this.selects = [];
-                window.main = _this;
-                _this.world = new World();
-                // init app
-                _this.canvas = canvas;
-                _this.app = new PIXI.Application({ view: canvas, transparent: true, antialias: true });
-                _this.stage = _this.app.stage;
-                _this.stage.interactive = true;
-                _this.stage.hitArea = new StageHitArea();
-                // init viewStack
-                _this.viewStack = new elec.ViewStack(_this);
-                _this.stage.addChild(_this.viewStack);
-                // init ticker
-                _this.ticker = _this.app.ticker;
-                _this.startTicker();
-                _this.ticker.add(_this.update, _this);
-                // init plugin
-                _this.pluginManager = new elec.PluginManager(_this);
-                _this.pluginManager.registerPlugin(new elec.DragPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.SelectPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.RoamPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.ZoomPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.HotkeyPlugin(_this));
-                _this.pluginManager.registerPlugin(new elec.DrawWirePlugin(_this));
-                var hotkeyPlugin = new elec.HotkeyPlugin(_this);
-                _this.pluginManager.registerPlugin(hotkeyPlugin);
-                hotkeyPlugin.registerHotKey("delete", _this.deleteSelects, _this);
-                hotkeyPlugin.registerHotKey("ctrl+a", _this.selectAll, _this);
-                _this.resized();
-                _this.addEq("Battery", new Point(500, 300));
-                _this.addEq("Resistance", new Point(200, 300));
-                _this.addEq("SingleSwitch", new Point(200, 400));
-                _this.addEq("Wire", new Point(500, 400));
-                _this.addEq("Bulb", new Point(350, 350));
-                return _this;
+            DragPlugin.prototype.destroy = function () {
+                _super.prototype.destroy.call(this);
+            };
+            DragPlugin.prototype.onMouseDown = function (e) {
+                _super.prototype.onMouseDown.call(this, e);
+                if (e.target instanceof elec.EqBase) {
+                    this.map[e.data.identifier] = new DragItem(e.target, e.data.identifier, this.global2view(e.data.global));
+                }
+            };
+            DragPlugin.prototype.onMouseMove = function (e) {
+                _super.prototype.onMouseMove.call(this, e);
+                var dragItem = this.map[e.data.identifier];
+                if (dragItem) {
+                    if (!dragItem.eq.isSelect) {
+                        this.main.select([dragItem.eq], e.data.originalEvent.ctrlKey);
+                    }
+                    var p = this.global2view(e.data.global);
+                    this.main.moveSelectBy(p.x - dragItem.p.x, p.y - dragItem.p.y);
+                    dragItem.p = p;
+                    dragItem.moved = true;
+                }
+            };
+            DragPlugin.prototype.onMouseUp = function (e) {
+                _super.prototype.onMouseUp.call(this, e);
+                if (this.map[e.data.identifier]) {
+                    var dragItem = this.map[e.data.identifier];
+                    if (dragItem.moved) {
+                        e.stopPropagation();
+                    }
+                    delete this.map[e.data.identifier];
+                }
+            };
+            return DragPlugin;
+        }(elec.PluginBase));
+        elec.DragPlugin = DragPlugin;
+        var DragItem = /** @class */ (function () {
+            function DragItem(eq, id, p) {
+                this.moved = false;
+                this.eq = eq;
+                this.id = id;
+                this.p = p;
             }
-            ElecMain.prototype.destroy = function () {
-                this.pluginManager.destroy();
-                this.stopTicker();
-                this.ticker = null;
-            };
-            ElecMain.prototype.update = function (deltaTime) {
-                var _this = this;
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].isSelect = true;
-                }
-                this.world.calculate();
-                this.forEachEq(function (eq) {
-                    eq.update(_this.ticker.deltaMS);
-                });
-            };
-            ElecMain.prototype.resized = function () {
-            };
-            ElecMain.prototype.startTicker = function () {
-                if (!this.ticker.started) {
-                    this.ticker.start();
-                }
-            };
-            ElecMain.prototype.stopTicker = function () {
-                if (this.ticker.started) {
-                    this.ticker.stop();
-                }
-            };
-            ElecMain.prototype.select = function (eqs, add) {
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].isSelect = false;
-                }
-                if (!add) {
-                    this.selects.length = 0;
-                }
-                for (var i = 0; i < eqs.length; i++) {
-                    var eq = eqs[i];
-                    var ind = this.selects.indexOf(eq);
-                    if (ind === -1) {
-                        this.selects.push(eq);
-                    }
-                    else {
-                        this.selects.splice(ind, 1);
-                    }
-                }
-            };
-            ElecMain.prototype.addEq = function (className, p) {
-                var clazz = hanyeah.elec[className];
-                if (clazz) {
-                    var eq = new clazz(this);
-                    eq.x = p.x;
-                    eq.y = p.y;
-                    this.viewStack.eqLayer.addChild(eq);
-                    return eq;
-                }
-                return null;
-            };
-            ElecMain.prototype.removeEq = function (eq) {
-                this.viewStack.eqLayer.removeChild(eq);
-                elec.ArrayUtil.remove(this.selects, eq);
-                eq.destroy();
-            };
-            ElecMain.prototype.getEq = function (UID) {
-                return this.viewStack.eqLayer.getEqByUID(UID);
-            };
-            ElecMain.prototype.moveSelectBy = function (dx, dy) {
-                for (var i = 0; i < this.selects.length; i++) {
-                    this.selects[i].moveBy(dx, dy);
-                }
-            };
-            ElecMain.prototype.moveStageBy = function (dx, dy) {
-                this.viewStack.x += dx;
-                this.viewStack.y += dy;
-            };
-            ElecMain.prototype.scaleBy = function (s, p) {
-                var s0 = this.viewStack.scale.x;
-                var s1 = s0 * s;
-                this.viewStack.scale.x = s1;
-                this.viewStack.scale.y = s1;
-                this.viewStack.x += p.x * (1 - s) * s0;
-                this.viewStack.y += p.y * (1 - s) * s0;
-            };
-            ElecMain.prototype.selectByRect = function (rect) {
-                var sc = this.getScale();
-                var rect0 = new Rectangle();
-                var rect1 = new Rectangle(rect.x * sc + this.viewStack.x, rect.y * sc + this.viewStack.y, rect.width * sc, rect.height * sc);
-                var arr = [];
-                this.forEachEq(function (eq) {
-                    if (elec.RectangleUtil.intersects(rect1, eq.getBounds(true, rect0), false)) {
-                        arr.push(eq);
-                    }
-                });
-                this.select(arr, false);
-            };
-            ElecMain.prototype.selectAll = function () {
-                var arr = [];
-                this.forEachEq(function (eq) {
-                    arr.push(eq);
-                });
-                this.select(arr, false);
-            };
-            ElecMain.prototype.deleteSelects = function () {
-                var _this = this;
-                this.selects.forEach(function (eq) {
-                    _this.viewStack.eqLayer.removeChild(eq);
-                    eq.destroy();
-                });
-                this.selects = [];
-            };
-            ElecMain.prototype.deleteAll = function () {
-                this.forEachEq(function (eq) {
-                    eq.destroy();
-                });
-                this.viewStack.eqLayer.removeChildren();
-                this.selects = [];
-            };
-            ElecMain.prototype.forEachEq = function (callBack, inverted) {
-                if (inverted === void 0) { inverted = false; }
-                if (inverted) {
-                    for (var i = this.viewStack.eqLayer.children.length - 1; i >= 0; i--) {
-                        callBack(this.viewStack.eqLayer.children[i]);
-                    }
-                }
-                else {
-                    for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
-                        callBack(this.viewStack.eqLayer.children[i]);
-                    }
-                }
-            };
-            ElecMain.prototype.getData = function () {
-                var obj = {};
-                obj.eqs = [];
-                this.forEachEq(function (eq) {
-                    obj.eqs.push(eq.getData());
-                });
-                return obj;
-            };
-            ElecMain.prototype.setData = function (obj) {
-            };
-            ElecMain.prototype.getScale = function () {
-                return this.viewStack.scale.x;
-            };
-            ElecMain.prototype.global2view = function (p) {
-                return this.viewStack.toLocal(p);
-            };
-            ElecMain.prototype.getFriend = function (eq) {
-                var _this = this;
-                var vertex0 = this.getRootVertex(eq.terminal0);
-                var vertex1 = this.getRootVertex(eq.terminal1);
-                var arr = [];
-                this.forEachEq(function (eq0) {
-                    if (eq0 instanceof elec.TwoTerminalEq) {
-                        var v00 = _this.getRootVertex(eq0.terminal0);
-                        var v01 = _this.getRootVertex(eq0.terminal1);
-                        if (v00 === vertex0
-                            || v00 === vertex1
-                            || v01 === vertex0
-                            || v01 === vertex1) {
-                            arr.push(eq0);
-                        }
-                    }
-                });
-                return arr;
-            };
-            ElecMain.prototype.getRootVertex = function (terminal) {
-                return terminal.vertex.connUFS.root.userData;
-            };
-            return ElecMain;
-        }(elec.HObject));
-        elec.ElecMain = ElecMain;
-        /**
-         * stage的hitArea，永远返回true，实现舞台任意位置点击都有事件。
-         */
-        var StageHitArea = /** @class */ (function () {
-            function StageHitArea() {
-                //
-            }
-            StageHitArea.prototype.contains = function (x, y) {
-                return true;
-            };
-            return StageHitArea;
+            return DragItem;
         }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
@@ -686,9 +509,12 @@ var hanyeah;
                 _this.className = "SingleSwitch";
                 _this.isBreak = true;
                 _this.edge.isBreak = _this.isBreak;
-                _this.knife.addListener("pointertap", _this.toggleOpen, _this);
                 return _this;
             }
+            SingleSwitch.prototype.init = function () {
+                _super.prototype.init.call(this);
+                this.knife.addListener("pointertap", this.toggleOpen, this);
+            };
             SingleSwitch.prototype.initSkin = function () {
                 var gra = new Graphics();
                 gra.beginFill(0x000000, 1.0);
@@ -727,6 +553,7 @@ var hanyeah;
     (function (elec) {
         var Point = PIXI.Point;
         var Graphics = PIXI.Graphics;
+        var SimpleRope = PIXI.SimpleRope;
         var Wire = /** @class */ (function (_super) {
             __extends(Wire, _super);
             function Wire(main) {
@@ -742,28 +569,27 @@ var hanyeah;
                 this.terminal1.update();
                 this.vertexs[0].x = this.terminal0.x;
                 this.vertexs[0].y = this.terminal0.y;
-                this.vertexs[1].x = this.terminal1.x;
-                this.vertexs[1].y = this.terminal1.y;
+                var n = this.vertexs.length - 1;
+                this.vertexs[n].x = this.terminal1.x;
+                this.vertexs[n].y = this.terminal1.y;
                 this.updateSkin();
             };
             Wire.prototype.initSkin = function () {
-                this.skin = new Graphics();
+                var gra = new Graphics();
+                gra.lineStyle(6, 0x000000);
+                gra.moveTo(0, 0);
+                gra.lineTo(50, 0);
+                gra.lineStyle(1, 0xff0000);
+                gra.beginFill(0xff0000, 1.0);
+                gra.drawCircle(50, 0, 6);
+                gra.endFill();
+                var texture = this.main.renderer.generateTexture(gra);
+                this.skin = new SimpleRope(texture, this.vertexs);
                 this.addChild(this.skin);
+                console.log(this);
             };
             Wire.prototype.updateSkin = function () {
-                var gra = this.skin;
-                gra.clear();
-                gra.lineStyle(6, 0x000000, 1.0);
-                var p;
-                for (var i = 0; i < this.vertexs.length; i++) {
-                    p = this.vertexs[i];
-                    if (i === 0) {
-                        gra.moveTo(p.x, p.y);
-                    }
-                    else {
-                        gra.lineTo(p.x, p.y);
-                    }
-                }
+                //
             };
             Wire.prototype.moveBy = function (dx, dy) {
                 _super.prototype.moveBy.call(this, dx, dy);
@@ -827,6 +653,29 @@ var hanyeah;
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
+ * Created by hanyeah on 2019/9/18.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var ViewStack = /** @class */ (function (_super) {
+            __extends(ViewStack, _super);
+            function ViewStack(main) {
+                var _this = _super.call(this, main) || this;
+                _this.interactive = true;
+                _this.eqLayer = new elec.EqLayer(_this.main);
+                _this.addChild(_this.eqLayer);
+                _this.assistLayer = new elec.Container(_this.main);
+                _this.addChild(_this.assistLayer);
+                return _this;
+            }
+            return ViewStack;
+        }(elec.Container));
+        elec.ViewStack = ViewStack;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
  * Created by hanyeah on 2019/9/22.
  */
 var hanyeah;
@@ -852,61 +701,6 @@ var hanyeah;
             return HitArea;
         }());
         elec.HitArea = HitArea;
-    })(elec = hanyeah.elec || (hanyeah.elec = {}));
-})(hanyeah || (hanyeah = {}));
-var hanyeah;
-(function (hanyeah) {
-    var elec;
-    (function (elec) {
-        var DragPlugin = /** @class */ (function (_super) {
-            __extends(DragPlugin, _super);
-            function DragPlugin(main) {
-                return _super.call(this, main) || this;
-            }
-            DragPlugin.prototype.destroy = function () {
-                _super.prototype.destroy.call(this);
-            };
-            DragPlugin.prototype.onMouseDown = function (e) {
-                _super.prototype.onMouseDown.call(this, e);
-                if (e.target instanceof elec.EqBase) {
-                    this.map[e.data.identifier] = new DragItem(e.target, e.data.identifier, this.global2view(e.data.global));
-                }
-            };
-            DragPlugin.prototype.onMouseMove = function (e) {
-                _super.prototype.onMouseMove.call(this, e);
-                var dragItem = this.map[e.data.identifier];
-                if (dragItem) {
-                    if (!dragItem.eq.isSelect) {
-                        this.main.select([dragItem.eq], e.data.originalEvent.ctrlKey);
-                    }
-                    var p = this.global2view(e.data.global);
-                    this.main.moveSelectBy(p.x - dragItem.p.x, p.y - dragItem.p.y);
-                    dragItem.p = p;
-                    dragItem.moved = true;
-                }
-            };
-            DragPlugin.prototype.onMouseUp = function (e) {
-                _super.prototype.onMouseUp.call(this, e);
-                if (this.map[e.data.identifier]) {
-                    var dragItem = this.map[e.data.identifier];
-                    if (dragItem.moved) {
-                        e.stopPropagation();
-                    }
-                    delete this.map[e.data.identifier];
-                }
-            };
-            return DragPlugin;
-        }(elec.PluginBase));
-        elec.DragPlugin = DragPlugin;
-        var DragItem = /** @class */ (function () {
-            function DragItem(eq, id, p) {
-                this.moved = false;
-                this.eq = eq;
-                this.id = id;
-                this.p = p;
-            }
-            return DragItem;
-        }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**
@@ -1602,6 +1396,241 @@ var hanyeah;
             return RedoUndoManager;
         }());
         elec.RedoUndoManager = RedoUndoManager;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+/**
+ * Created by hanyeah on 2019/9/26.
+ */
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var DirectRouter = /** @class */ (function (_super) {
+            __extends(DirectRouter, _super);
+            function DirectRouter(vertexs) {
+                return _super.call(this, vertexs) || this;
+            }
+            DirectRouter.prototype.addVertex = function (vertex) {
+                if (this.vertexs.length === 0) {
+                    this.vertexs[0] = vertex;
+                }
+                else {
+                    this.vertexs[1] = vertex;
+                }
+            };
+            return DirectRouter;
+        }(elec.RouterBase));
+        elec.DirectRouter = DirectRouter;
+    })(elec = hanyeah.elec || (hanyeah.elec = {}));
+})(hanyeah || (hanyeah = {}));
+var hanyeah;
+(function (hanyeah) {
+    var elec;
+    (function (elec) {
+        var Point = PIXI.Point;
+        var Rectangle = PIXI.Rectangle;
+        var World = hanyeah.electricity.World;
+        var ElecMain = /** @class */ (function (_super) {
+            __extends(ElecMain, _super);
+            function ElecMain(canvas) {
+                var _this = _super.call(this) || this;
+                _this.selects = [];
+                window.main = _this;
+                _this.world = new World();
+                // init app
+                _this.canvas = canvas;
+                _this.app = new PIXI.Application({ view: canvas, transparent: true, antialias: true });
+                _this.renderer = _this.app.renderer;
+                _this.stage = _this.app.stage;
+                _this.stage.interactive = true;
+                _this.stage.hitArea = new StageHitArea();
+                // init viewStack
+                _this.viewStack = new elec.ViewStack(_this);
+                _this.stage.addChild(_this.viewStack);
+                // init ticker
+                _this.ticker = _this.app.ticker;
+                _this.startTicker();
+                _this.ticker.add(_this.update, _this);
+                // init plugin
+                _this.pluginManager = new elec.PluginManager(_this);
+                _this.pluginManager.registerPlugin(new elec.DragPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.SelectPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.RoamPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.ZoomPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.HotkeyPlugin(_this));
+                _this.pluginManager.registerPlugin(new elec.DrawWirePlugin(_this));
+                var hotkeyPlugin = new elec.HotkeyPlugin(_this);
+                _this.pluginManager.registerPlugin(hotkeyPlugin);
+                hotkeyPlugin.registerHotKey("delete", _this.deleteSelects, _this);
+                hotkeyPlugin.registerHotKey("ctrl+a", _this.selectAll, _this);
+                _this.resized();
+                _this.addEq("Battery", new Point(500, 300));
+                _this.addEq("Resistance", new Point(200, 300));
+                _this.addEq("SingleSwitch", new Point(200, 400));
+                _this.addEq("Wire", new Point(500, 400));
+                _this.addEq("Bulb", new Point(350, 350));
+                return _this;
+            }
+            ElecMain.prototype.destroy = function () {
+                this.pluginManager.destroy();
+                this.stopTicker();
+                this.ticker = null;
+            };
+            ElecMain.prototype.update = function (deltaTime) {
+                var _this = this;
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].isSelect = true;
+                }
+                this.world.calculate();
+                this.forEachEq(function (eq) {
+                    eq.update(_this.ticker.deltaMS);
+                });
+            };
+            ElecMain.prototype.resized = function () {
+            };
+            ElecMain.prototype.startTicker = function () {
+                if (!this.ticker.started) {
+                    this.ticker.start();
+                }
+            };
+            ElecMain.prototype.stopTicker = function () {
+                if (this.ticker.started) {
+                    this.ticker.stop();
+                }
+            };
+            ElecMain.prototype.select = function (eqs, add) {
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].isSelect = false;
+                }
+                if (!add) {
+                    this.selects.length = 0;
+                }
+                for (var i = 0; i < eqs.length; i++) {
+                    var eq = eqs[i];
+                    var ind = this.selects.indexOf(eq);
+                    if (ind === -1) {
+                        this.selects.push(eq);
+                    }
+                    else {
+                        this.selects.splice(ind, 1);
+                    }
+                }
+            };
+            ElecMain.prototype.addEq = function (className, p) {
+                var clazz = hanyeah.elec[className];
+                if (clazz) {
+                    var eq = new clazz(this);
+                    eq.init();
+                    eq.x = p.x;
+                    eq.y = p.y;
+                    this.viewStack.eqLayer.addChild(eq);
+                    return eq;
+                }
+                return null;
+            };
+            ElecMain.prototype.removeEq = function (eq) {
+                this.viewStack.eqLayer.removeChild(eq);
+                elec.ArrayUtil.remove(this.selects, eq);
+                eq.destroy();
+            };
+            ElecMain.prototype.getEq = function (UID) {
+                return this.viewStack.eqLayer.getEqByUID(UID);
+            };
+            ElecMain.prototype.moveSelectBy = function (dx, dy) {
+                for (var i = 0; i < this.selects.length; i++) {
+                    this.selects[i].moveBy(dx, dy);
+                }
+            };
+            ElecMain.prototype.moveStageBy = function (dx, dy) {
+                this.viewStack.x += dx;
+                this.viewStack.y += dy;
+            };
+            ElecMain.prototype.scaleBy = function (s, p) {
+                var s0 = this.viewStack.scale.x;
+                var s1 = s0 * s;
+                this.viewStack.scale.x = s1;
+                this.viewStack.scale.y = s1;
+                this.viewStack.x += p.x * (1 - s) * s0;
+                this.viewStack.y += p.y * (1 - s) * s0;
+            };
+            ElecMain.prototype.selectByRect = function (rect) {
+                var sc = this.getScale();
+                var rect0 = new Rectangle();
+                var rect1 = new Rectangle(rect.x * sc + this.viewStack.x, rect.y * sc + this.viewStack.y, rect.width * sc, rect.height * sc);
+                var arr = [];
+                this.forEachEq(function (eq) {
+                    if (elec.RectangleUtil.intersects(rect1, eq.getBounds(true, rect0), false)) {
+                        arr.push(eq);
+                    }
+                });
+                this.select(arr, false);
+            };
+            ElecMain.prototype.selectAll = function () {
+                var arr = [];
+                this.forEachEq(function (eq) {
+                    arr.push(eq);
+                });
+                this.select(arr, false);
+            };
+            ElecMain.prototype.deleteSelects = function () {
+                var _this = this;
+                this.selects.forEach(function (eq) {
+                    _this.viewStack.eqLayer.removeChild(eq);
+                    eq.destroy();
+                });
+                this.selects = [];
+            };
+            ElecMain.prototype.deleteAll = function () {
+                this.forEachEq(function (eq) {
+                    eq.destroy();
+                });
+                this.viewStack.eqLayer.removeChildren();
+                this.selects = [];
+            };
+            ElecMain.prototype.forEachEq = function (callBack, inverted) {
+                if (inverted === void 0) { inverted = false; }
+                if (inverted) {
+                    for (var i = this.viewStack.eqLayer.children.length - 1; i >= 0; i--) {
+                        callBack(this.viewStack.eqLayer.children[i]);
+                    }
+                }
+                else {
+                    for (var i = 0; i < this.viewStack.eqLayer.children.length; i++) {
+                        callBack(this.viewStack.eqLayer.children[i]);
+                    }
+                }
+            };
+            ElecMain.prototype.getData = function () {
+                var obj = {};
+                obj.eqs = [];
+                this.forEachEq(function (eq) {
+                    obj.eqs.push(eq.getData());
+                });
+                return obj;
+            };
+            ElecMain.prototype.setData = function (obj) {
+            };
+            ElecMain.prototype.getScale = function () {
+                return this.viewStack.scale.x;
+            };
+            ElecMain.prototype.global2view = function (p) {
+                return this.viewStack.toLocal(p);
+            };
+            return ElecMain;
+        }(elec.HObject));
+        elec.ElecMain = ElecMain;
+        /**
+         * stage的hitArea，永远返回true，实现舞台任意位置点击都有事件。
+         */
+        var StageHitArea = /** @class */ (function () {
+            function StageHitArea() {
+                //
+            }
+            StageHitArea.prototype.contains = function (x, y) {
+                return true;
+            };
+            return StageHitArea;
+        }());
     })(elec = hanyeah.elec || (hanyeah.elec = {}));
 })(hanyeah || (hanyeah = {}));
 /**

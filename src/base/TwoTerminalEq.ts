@@ -34,6 +34,15 @@ namespace hanyeah.elec {
       this.I = this.edge.I;
     }
 
+    public addTerminal(x: number, y: number) {
+      const terminal: Terminal = new Terminal(this.main);
+      terminal.eq = this;
+      terminal.x = x;
+      terminal.y = y;
+      this.addChild(terminal);
+      return terminal;
+    }
+
     public getData(): any {
       const obj: any = super.getData();
       obj.terminal0 = this.terminal0.getData();

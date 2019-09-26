@@ -3288,146 +3288,145 @@ declare namespace PIXI {
     ///////////////////////////////MESH///////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
 
-    namespace mesh {
-        class Mesh extends Container {
-            constructor(
-                texture: Texture,
-                vertices?: Float32Array,
-                uvs?: Float32Array,
-                indices?: Uint16Array,
-                drawMode?: number
-            );
+    class Mesh extends Container {
+      constructor(
+        texture: Texture,
+        vertices?: Float32Array,
+        uvs?: Float32Array,
+        indices?: Uint16Array,
+        drawMode?: number
+      );
 
-            protected _texture: Texture;
-            uvs: Float32Array;
-            vertices: Float32Array;
-            indices: Uint16Array;
-            dirty: number;
-            indexDirty: number;
-            vertexDirty: number;
-            autoUpdate: boolean;
-            dirtyVertex: boolean;
-            protected _geometryVersion: number;
-            blendMode: number;
-            pluginName: string;
-            canvasPadding: number;
-            drawMode: number;
-            texture: Texture;
-            tintRgb: Float32Array;
-            protected _glDatas: { [n: number]: any };
-            protected _uvTransform: extras.TextureMatrix;
-            uploadUvTransform: boolean;
-            multiplyUvs(): void;
-            refresh(forceUpdate?: boolean): void;
-            protected _refresh(): void;
-            protected _renderWebGL(renderer: WebGLRenderer): void;
-            protected _renderCanvas(renderer: CanvasRenderer): void;
-            protected _onTextureUpdate(): void;
-            protected _calculateBounds(): void;
-            containsPoint(point: Point): boolean;
-            tint: number;
+      protected _texture: Texture;
+      uvs: Float32Array;
+      vertices: Float32Array;
+      indices: Uint16Array;
+      dirty: number;
+      indexDirty: number;
+      vertexDirty: number;
+      autoUpdate: boolean;
+      dirtyVertex: boolean;
+      protected _geometryVersion: number;
+      blendMode: number;
+      pluginName: string;
+      canvasPadding: number;
+      drawMode: number;
+      texture: Texture;
+      tintRgb: Float32Array;
+      protected _glDatas: { [n: number]: any };
+      protected _uvTransform: extras.TextureMatrix;
+      uploadUvTransform: boolean;
+      multiplyUvs(): void;
+      refresh(forceUpdate?: boolean): void;
+      protected _refresh(): void;
+      protected _renderWebGL(renderer: WebGLRenderer): void;
+      protected _renderCanvas(renderer: CanvasRenderer): void;
+      protected _onTextureUpdate(): void;
+      protected _calculateBounds(): void;
+      containsPoint(point: Point): boolean;
+      tint: number;
 
-            static DRAW_MODES: {
-                TRIANGLE_MESH: number;
-                TRIANGLES: number;
-            };
-        }
+      static DRAW_MODES: {
+        TRIANGLE_MESH: number;
+        TRIANGLES: number;
+      };
+    }
 
-        class CanvasMeshRenderer {
-            constructor(renderer: CanvasRenderer);
+    class CanvasMeshRenderer {
+      constructor(renderer: CanvasRenderer);
 
-            renderer: CanvasRenderer;
+      renderer: CanvasRenderer;
 
-            render(mesh: Mesh): void;
-            protected _renderTriangleMesh(mesh: Mesh): void;
-            protected _renderTriangles(mesh: Mesh): void;
-            protected _renderDrawTriangle(
-                mesh: Mesh,
-                index0: number,
-                index1: number,
-                index2: number
-            ): void;
-            protected renderMeshFlat(mesh: Mesh): void;
+      render(mesh: Mesh): void;
+      protected _renderTriangleMesh(mesh: Mesh): void;
+      protected _renderTriangles(mesh: Mesh): void;
+      protected _renderDrawTriangle(
+        mesh: Mesh,
+        index0: number,
+        index1: number,
+        index2: number
+      ): void;
+      protected renderMeshFlat(mesh: Mesh): void;
 
-            destroy(): void;
-        }
+      destroy(): void;
+    }
 
-        class MeshRenderer extends ObjectRenderer {
-            constructor(renderer: WebGLRenderer);
+    class MeshRenderer extends ObjectRenderer {
+      constructor(renderer: WebGLRenderer);
 
-            shader: Shader;
-            render(mesh: Mesh): void;
-        }
+      shader: Shader;
+      render(mesh: Mesh): void;
+    }
 
-        class Plane extends Mesh {
-            constructor(
-                texture: Texture,
-                verticesX?: number,
-                verticesY?: number
-            );
-            protected _ready: boolean;
-            verticesX: number;
-            verticesY: number;
-            drawMode: number;
+    class Plane extends Mesh {
+      constructor(
+        texture: Texture,
+        verticesX?: number,
+        verticesY?: number
+      );
+      protected _ready: boolean;
+      verticesX: number;
+      verticesY: number;
+      drawMode: number;
 
-            refresh(): void;
+      refresh(): void;
 
-            protected _onTexureUpdate(): void;
-        }
+      protected _onTexureUpdate(): void;
+    }
 
-        class NineSlicePlane extends Plane {
-            constructor(
-                texture: Texture,
-                leftWidth?: number,
-                topHeight?: number,
-                rightWidth?: number,
-                bottomHeight?: number
-            );
+    class NineSlicePlane extends Plane {
+      constructor(
+        texture: Texture,
+        leftWidth?: number,
+        topHeight?: number,
+        rightWidth?: number,
+        bottomHeight?: number
+      );
 
-            width: number;
-            height: number;
-            leftWidth: number;
-            rightWidth: number;
-            topHeight: number;
-            bottomHeight: number;
+      width: number;
+      height: number;
+      leftWidth: number;
+      rightWidth: number;
+      topHeight: number;
+      bottomHeight: number;
 
-            protected _leftWidth: number;
-            protected _rightWidth: number;
-            protected _topHeight: number;
-            protected _bottomHeight: number;
-            protected _height: number;
-            protected _width: number;
-            protected _origHeight: number;
-            protected _origWidth: number;
-            protected _uvh: number;
-            protected _uvw: number;
+      protected _leftWidth: number;
+      protected _rightWidth: number;
+      protected _topHeight: number;
+      protected _bottomHeight: number;
+      protected _height: number;
+      protected _width: number;
+      protected _origHeight: number;
+      protected _origWidth: number;
+      protected _uvh: number;
+      protected _uvw: number;
 
-            updateHorizontalVertices(): void;
-            updateVerticalVertices(): void;
-            protected drawSegment(
-                context: CanvasRenderingContext2D | WebGLRenderingContext,
-                textureSource: any,
-                w: number,
-                h: number,
-                x1: number,
-                y1: number,
-                x2: number,
-                y2: number
-            ): void;
-            protected _renderCanvas(renderer: CanvasRenderer): void;
-            protected _refresh(): void;
-        }
+      updateHorizontalVertices(): void;
+      updateVerticalVertices(): void;
+      protected drawSegment(
+        context: CanvasRenderingContext2D | WebGLRenderingContext,
+        textureSource: any,
+        w: number,
+        h: number,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+      ): void;
+      protected _renderCanvas(renderer: CanvasRenderer): void;
+      protected _refresh(): void;
+    }
 
-        class Rope extends Mesh {
-            constructor(texture: Texture, points: Point[]);
+    class SimpleRope extends Mesh {
+      constructor(texture: Texture, points: Point[]);
 
-            points: Point[];
-            colors: number[];
-            autoUpdate: boolean;
-            protected _refresh(): void;
+      points: Point[];
+      colors: number[];
+      autoUpdate: boolean;
+      start: number;
+      protected _refresh(): void;
 
-            refreshVertices(): void;
-        }
+      refreshVertices(): void;
     }
     //////////////////////////////////////////////////////////////////////////////
     /////////////////////////////PARTICLES////////////////////////////////////////
@@ -4171,20 +4170,20 @@ declare namespace PIXI {
          * @private
          * @name Strip
          * @memberof PIXI
-         * @see PIXI.mesh.Mesh
+         * @see PIXI.Mesh
          * @deprecated since version 3.0.0
          */
-        type Strip = mesh.Mesh;
+        type Strip = Mesh;
 
         /**
          * @class
          * @private
          * @name Rope
          * @memberof PIXI
-         * @see PIXI.mesh.Rope
+         * @see PIXI.SimpleRope
          * @deprecated since version 3.0.0
          */
-        type Rope = mesh.Rope;
+        type Rope = SimpleRope;
 
         /**
          * @class

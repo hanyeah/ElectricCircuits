@@ -1,9 +1,12 @@
 namespace hanyeah.elec {
   import Point = PIXI.Point;
   import Graphics = PIXI.Graphics;
+  import Texture = PIXI.Texture;
+  import SimpleRope = PIXI.SimpleRope;
+
   export class Wire extends Resistance {
     public vertexs: Point[] = [];
-    private skin: Graphics;
+    private skin: SimpleRope;
     constructor(main: ElecMain) {
       super(main);
       this.className = "Wire";
@@ -16,29 +19,28 @@ namespace hanyeah.elec {
       this.terminal1.update();
       this.vertexs[0].x = this.terminal0.x;
       this.vertexs[0].y = this.terminal0.y;
-      this.vertexs[1].x = this.terminal1.x;
-      this.vertexs[1].y = this.terminal1.y;
+      const n: number = this.vertexs.length - 1;
+      this.vertexs[n].x = this.terminal1.x;
+      this.vertexs[n].y = this.terminal1.y;
       this.updateSkin();
     }
 
     initSkin() {
-      this.skin = new Graphics();
+      const gra: Graphics = new Graphics();
+      gra.lineStyle(6, 0x000000);
+      gra.moveTo(0, 0);
+      gra.lineTo(50, 0);
+      gra.lineStyle(1, 0xff0000);
+      gra.beginFill(0xff0000, 1.0);
+      gra.drawCircle(50, 0, 6);
+      gra.endFill();
+      const texture: Texture = this.main.renderer.generateTexture(gra);
+      this.skin = new SimpleRope(texture, this.vertexs);
       this.addChild(this.skin);
     }
 
     updateSkin() {
-      const gra: Graphics = this.skin;
-      gra.clear();
-      gra.lineStyle(6, 0x000000, 1.0);
-      let p: Point;
-      for (let i: number = 0; i < this.vertexs.length; i++) {
-        p = this.vertexs[i];
-        if (i === 0) {
-          gra.moveTo(p.x, p.y);
-        } else {
-          gra.lineTo(p.x, p.y);
-        }
-      }
+      //
     }
 
     moveBy(dx: number, dy: number) {

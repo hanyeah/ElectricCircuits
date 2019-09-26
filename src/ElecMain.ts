@@ -9,6 +9,7 @@ namespace hanyeah.elec {
     public world: World;
     public canvas: HTMLCanvasElement;
     public app: PIXI.Application;
+    public renderer: PIXI.SystemRenderer;
     public stage: PIXI.Container;
     public viewStack: ViewStack;
     public pluginManager: PluginManager;
@@ -23,6 +24,7 @@ namespace hanyeah.elec {
       // init app
       this.canvas = canvas;
       this.app = new PIXI.Application({view: canvas, transparent: true, antialias: true});
+      this.renderer = this.app.renderer;
       this.stage = this.app.stage;
       this.stage.interactive = true;
       this.stage.hitArea = new StageHitArea();
@@ -109,6 +111,7 @@ namespace hanyeah.elec {
       const clazz: any = hanyeah.elec[className];
       if (clazz) {
         const eq: EqBase =  new clazz(this) as EqBase;
+        eq.init();
         eq.x = p.x;
         eq.y = p.y;
         this.viewStack.eqLayer.addChild(eq);
