@@ -36,6 +36,17 @@ declare namespace hanyeah.elec {
         R: number;
         isBreak: boolean;
         constructor(main: ElecMain);
+        addTerminal(x: number, y: number): Terminal;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/18.
+ */
+declare namespace hanyeah.elec {
+    class HObject {
+        private static COUNTING;
+        UID: number;
+        constructor();
     }
 }
 /**
@@ -50,36 +61,14 @@ declare namespace hanyeah.elec {
         constructor(main: ElecMain);
         destroy(): void;
         update(dt: number): void;
-        addTerminal(x: number, y: number): Terminal;
         getData(): any;
         setData(obj: any): void;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/18.
- */
-declare namespace hanyeah.elec {
-    class HObject {
-        private static COUNTING;
-        UID: number;
-        constructor();
     }
 }
 declare namespace hanyeah.elec {
     class Resistance extends TwoTerminalEq {
         constructor(main: ElecMain);
         initSkin(): void;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/26.
- */
-declare namespace hanyeah.elec {
-    import Point = PIXI.Point;
-    class RouterBase {
-        vertexs: Point[];
-        constructor(vertexs: Point[]);
-        addVertex(vertex: Point): void;
     }
 }
 /**
@@ -239,14 +228,127 @@ declare namespace hanyeah.elec {
         getData(): any;
     }
 }
+/**
+ * Created by hanyeah on 2019/9/26.
+ */
 declare namespace hanyeah.elec {
-    import InteractionEvent = PIXI.interaction.InteractionEvent;
-    class DragPlugin extends PluginBase {
+    import Point = PIXI.Point;
+    class RouterBase {
+        vertexs: Point[];
+        constructor(vertexs: Point[]);
+        addVertex(vertex: Point): void;
+    }
+}
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    import Rectangle = PIXI.Rectangle;
+    import World = hanyeah.electricity.World;
+    class ElecMain extends HObject {
+        world: World;
+        canvas: HTMLCanvasElement;
+        app: PIXI.Application;
+        renderer: PIXI.SystemRenderer;
+        stage: PIXI.Container;
+        viewStack: ViewStack;
+        pluginManager: PluginManager;
+        private ticker;
+        private selects;
+        constructor(canvas: HTMLCanvasElement);
+        destroy(): void;
+        update(deltaTime: any): void;
+        resized(): void;
+        startTicker(): void;
+        stopTicker(): void;
+        select(eqs: EqBase[], add: boolean): void;
+        addEq(className: string, p: Point): EqBase;
+        removeEq(eq: EqBase): void;
+        getEq(UID: number): EqBase;
+        moveSelectBy(dx: number, dy: number): void;
+        moveStageBy(dx: number, dy: number): void;
+        scaleBy(s: number, p: Point): void;
+        selectByRect(rect: Rectangle): void;
+        selectAll(): void;
+        deleteSelects(): void;
+        deleteAll(): void;
+        forEachEq(callBack: Function, inverted?: boolean): void;
+        getData(): any;
+        setData(obj: any): void;
+        getScale(): number;
+        global2view(p: Point): Point;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+declare namespace hanyeah.elec {
+    class HitArea implements PIXI.IHitArea {
+        r: number;
+        x: number;
+        y: number;
+        constructor(con: PIXI.Container, x: number, y: number);
+        contains(x: number, y: number): boolean;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/20.
+ */
+declare namespace hanyeah.elec {
+    import Point = PIXI.Point;
+    import Vertex = hanyeah.electricity.elecData.Vertex;
+    class Terminal extends Container {
+        UID: number;
+        leader: Terminal;
+        eq: EqBase;
+        vertex: Vertex;
+        private _leader;
         constructor(main: ElecMain);
         destroy(): void;
-        onMouseDown(e: InteractionEvent): void;
-        onMouseMove(e: InteractionEvent): void;
-        onMouseUp(e: InteractionEvent): void;
+        update(): void;
+        setPosition(p: Point): void;
+        setPosition2(x: number, y: number): void;
+        getData(): any;
+        setData(obj: any): void;
+        private connect;
+        private disConnect;
+    }
+}
+declare namespace hanyeah.elec {
+    class Battery extends TwoTerminalEq {
+        SU: number;
+        constructor(main: ElecMain);
+        initSkin(): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/9/22.
+ */
+declare namespace hanyeah.elec {
+    class Bulb extends Resistance {
+        private light;
+        constructor(main: ElecMain);
+        initSkin(): void;
+        update(dt: number): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/10/7.
+ */
+declare namespace hanyeah.elec {
+    import Graphics = PIXI.Graphics;
+    import Edge = hanyeah.electricity.elecData.Edge;
+    import InteractionEvent = PIXI.interaction.InteractionEvent;
+    class DoubleSwitch extends ElecEq {
+        terminal0: Terminal;
+        terminal1: Terminal;
+        terminal2: Terminal;
+        edge0: Edge;
+        edge1: Edge;
+        knife: Graphics;
+        constructor(main: ElecMain);
+        init(): void;
+        initSkin(): void;
+        update(dt: number): void;
+        toggleOpen(e: InteractionEvent): void;
     }
 }
 declare namespace hanyeah.elec {
@@ -259,6 +361,24 @@ declare namespace hanyeah.elec {
         initSkin(): void;
         update(dt: number): void;
         toggleOpen(e: InteractionEvent): void;
+    }
+}
+/**
+ * Created by hanyeah on 2019/10/7.
+ */
+declare namespace hanyeah.elec {
+    import Graphics = PIXI.Graphics;
+    import Edge = hanyeah.electricity.elecData.Edge;
+    class SlideRheostat extends ElecEq {
+        terminal0: Terminal;
+        terminal1: Terminal;
+        terminal2: Terminal;
+        terminal3: Terminal;
+        edge0: Edge;
+        edge1: Edge;
+        slide: Graphics;
+        constructor(main: ElecMain);
+        initSkin(): void;
     }
 }
 declare namespace hanyeah.elec {
@@ -307,16 +427,14 @@ declare namespace hanyeah.elec {
         constructor(main: ElecMain);
     }
 }
-/**
- * Created by hanyeah on 2019/9/22.
- */
 declare namespace hanyeah.elec {
-    class HitArea implements PIXI.IHitArea {
-        r: number;
-        x: number;
-        y: number;
-        constructor(con: PIXI.Container, x: number, y: number);
-        contains(x: number, y: number): boolean;
+    import InteractionEvent = PIXI.interaction.InteractionEvent;
+    class DragPlugin extends PluginBase {
+        constructor(main: ElecMain);
+        destroy(): void;
+        onMouseDown(e: InteractionEvent): void;
+        onMouseMove(e: InteractionEvent): void;
+        onMouseUp(e: InteractionEvent): void;
     }
 }
 /**
@@ -354,36 +472,6 @@ declare namespace hanyeah.elec {
          */
         onKeyUp(e: KeyboardEvent, keyMap: any): void;
         private calculate;
-    }
-}
-/**
- * Created by hanyeah on 2019/9/20.
- */
-declare namespace hanyeah.elec {
-    import Point = PIXI.Point;
-    import Vertex = hanyeah.electricity.elecData.Vertex;
-    class Terminal extends Container {
-        UID: number;
-        leader: Terminal;
-        eq: EqBase;
-        vertex: Vertex;
-        private _leader;
-        constructor(main: ElecMain);
-        destroy(): void;
-        update(): void;
-        setPosition(p: Point): void;
-        setPosition2(x: number, y: number): void;
-        getData(): any;
-        setData(obj: any): void;
-        private connect;
-        private disConnect;
-    }
-}
-declare namespace hanyeah.elec {
-    class Battery extends TwoTerminalEq {
-        SU: number;
-        constructor(main: ElecMain);
-        initSkin(): void;
     }
 }
 /**
@@ -462,17 +550,6 @@ declare namespace hanyeah.elec {
     }
 }
 /**
- * Created by hanyeah on 2019/9/22.
- */
-declare namespace hanyeah.elec {
-    class Bulb extends Resistance {
-        private light;
-        constructor(main: ElecMain);
-        initSkin(): void;
-        update(dt: number): void;
-    }
-}
-/**
  * Created by hanyeah on 2019/9/19.
  */
 declare namespace hanyeah.elec {
@@ -500,44 +577,6 @@ declare namespace hanyeah.elec {
         addVertex(vertex: Point): void;
     }
 }
-declare namespace hanyeah.elec {
-    import Point = PIXI.Point;
-    import Rectangle = PIXI.Rectangle;
-    import World = hanyeah.electricity.World;
-    class ElecMain extends HObject {
-        world: World;
-        canvas: HTMLCanvasElement;
-        app: PIXI.Application;
-        renderer: PIXI.SystemRenderer;
-        stage: PIXI.Container;
-        viewStack: ViewStack;
-        pluginManager: PluginManager;
-        private ticker;
-        private selects;
-        constructor(canvas: HTMLCanvasElement);
-        destroy(): void;
-        update(deltaTime: any): void;
-        resized(): void;
-        startTicker(): void;
-        stopTicker(): void;
-        select(eqs: EqBase[], add: boolean): void;
-        addEq(className: string, p: Point): EqBase;
-        removeEq(eq: EqBase): void;
-        getEq(UID: number): EqBase;
-        moveSelectBy(dx: number, dy: number): void;
-        moveStageBy(dx: number, dy: number): void;
-        scaleBy(s: number, p: Point): void;
-        selectByRect(rect: Rectangle): void;
-        selectAll(): void;
-        deleteSelects(): void;
-        deleteAll(): void;
-        forEachEq(callBack: Function, inverted?: boolean): void;
-        getData(): any;
-        setData(obj: any): void;
-        getScale(): number;
-        global2view(p: Point): Point;
-    }
-}
 /**
  * Created by hanyeah on 2019/9/22.
  */
@@ -553,6 +592,8 @@ declare namespace hanyeah.elec {
     class MathUtil {
         private static COUNTING;
         static getUID(): number;
+        static ang2rad(ang: number): number;
+        static rad2ang(rad: number): number;
     }
 }
 /**

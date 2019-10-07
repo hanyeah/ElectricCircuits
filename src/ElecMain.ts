@@ -3,7 +3,6 @@ namespace hanyeah.elec {
   import Point = PIXI.Point;
   import Rectangle = PIXI.Rectangle;
   import World = hanyeah.electricity.World;
-  import Vertex = hanyeah.electricity.elecData.Vertex;
   export class ElecMain extends HObject {
 
     public world: World;
@@ -15,7 +14,6 @@ namespace hanyeah.elec {
     public pluginManager: PluginManager;
     private ticker: PIXI.ticker.Ticker;
     private selects: EqBase[] = [];
-
 
     constructor(canvas: HTMLCanvasElement) {
       super();
@@ -55,6 +53,8 @@ namespace hanyeah.elec {
       this.addEq("SingleSwitch", new Point(200, 400));
       this.addEq("Wire", new Point(500, 400));
       this.addEq("Bulb", new Point(350, 350));
+      this.addEq("DoubleSwitch", new Point(350, 500));
+      this.addEq("SlideRheostat", new Point(250, 500));
     }
 
     public destroy() {

@@ -31,10 +31,9 @@ namespace hanyeah.elec{
       this.addChild(knife);
       knife.x = -40;
       knife.y = -15;
-      knife.rotation = -30 * Math.PI / 180;
+      knife.rotation = MathUtil.ang2rad(-30);
       this.knife = knife;
       this.knife.interactive = true;
-      this.knife.hitArea = new HitArea(this.knife, 110, 0);
     }
 
     public update(dt: number) {

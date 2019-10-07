@@ -8,5 +8,14 @@ namespace hanyeah.elec{
     public static getUID(): number{
       return MathUtil.COUNTING++;
     }
+
+    public static ang2rad(ang: number): number {
+      return ang * Math.PI / 180;
+    }
+
+    public static rad2ang(rad: number): number {
+      return rad * 180 / Math.PI;
+    }
+
   }
 }
