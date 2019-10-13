@@ -4,8 +4,6 @@
 namespace hanyeah.elec{
   import Graphics = PIXI.Graphics;
   import Edge = hanyeah.electricity.elecData.Edge;
-  import Vertex = hanyeah.electricity.elecData.Vertex;
-  import Point = PIXI.Point;
   import InteractionEvent = PIXI.interaction.InteractionEvent;
 
   export class DoubleSwitch extends ElecEq{
@@ -15,17 +13,14 @@ namespace hanyeah.elec{
     public edge0: Edge;
     public edge1: Edge;
     public knife: Graphics;
+    public elecData: SeriesConn;
     constructor(main: ElecMain){
       super(main);
       this.className = "DoubleSwitch";
-      this.terminal0 = this.addTerminal(-50, 0);
-      this.terminal1 = this.addTerminal(0, 0);
-      this.terminal2 = this.addTerminal(50, 0);
-      this.terminal0.vertex = new Vertex(this.main.world);
-      this.terminal1.vertex = new Vertex(this.main.world);
-      this.terminal2.vertex = new Vertex(this.main.world);
-      this.edge0 = new Edge(this.main.world, this.terminal0.vertex, this.terminal1.vertex);
-      this.edge1 = new Edge(this.main.world, this.terminal1.vertex, this.terminal2.vertex);
+      this.elecData = new SeriesConn(this.main.world);
+      this.terminal0 = this.addTerminal(-50, 0, this.elecData.vertex0);
+      this.terminal1 = this.addTerminal(0, 0, this.elecData.vertex1);
+      this.terminal2 = this.addTerminal(50, 0, this.elecData.vertex2);
     }
 
     public init() {

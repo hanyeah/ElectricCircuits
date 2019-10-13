@@ -24,8 +24,9 @@ namespace hanyeah.elec {
     public vertex: Vertex;
     private _leader: Terminal;
 
-    constructor(main: ElecMain) {
+    constructor(main: ElecMain, vertex: Vertex) {
       super(main);
+      this.vertex = vertex;
       this.interactive = true;
       this.hitArea = new TerminalHItArea();
 

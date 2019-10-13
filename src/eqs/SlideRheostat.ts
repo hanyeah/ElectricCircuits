@@ -3,30 +3,20 @@
  */
 namespace hanyeah.elec{
   import Graphics = PIXI.Graphics;
-  import Edge = hanyeah.electricity.elecData.Edge;
-  import Vertex = hanyeah.electricity.elecData.Vertex;
-  import Point = PIXI.Point;
-  import InteractionEvent = PIXI.interaction.InteractionEvent;
   export class SlideRheostat extends ElecEq{
     public terminal0: Terminal;
     public terminal1: Terminal;
     public terminal2: Terminal;
     public terminal3: Terminal;
-    public edge0: Edge;
-    public edge1: Edge;
     public slide: Graphics;
+    public elecData: SeriesConn;
     constructor(main: ElecMain){
       super(main);
       this.className = "SlideRheostat";
-      this.terminal0 = this.addTerminal(-50, 0);
-      this.terminal1 = this.addTerminal(50, 0);
-      this.terminal2 = this.addTerminal(-50, -20);
-      this.terminal3 = this.addTerminal(50, -20);
-      this.terminal0.vertex = new Vertex(this.main.world);
-      this.terminal1.vertex = new Vertex(this.main.world);
-      this.terminal2.vertex = this.terminal3.vertex = new Vertex(this.main.world);
-      this.edge0 = new Edge(this.main.world, this.terminal0.vertex, this.terminal2.vertex);
-      this.edge1 = new Edge(this.main.world, this.terminal1.vertex, this.terminal2.vertex);
+      this.terminal0 = this.addTerminal(-50, 0, this.elecData.vertex0);
+      this.terminal1 = this.addTerminal(50, 0, this.elecData.vertex2);
+      this.terminal2 = this.addTerminal(-50, -20, this.elecData.vertex1);
+      this.terminal3 = this.addTerminal(50, -20, this.elecData.vertex1);
     }
 
     public initSkin(){

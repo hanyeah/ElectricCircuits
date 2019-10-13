@@ -1,4 +1,7 @@
 namespace hanyeah.elec {
+  import Edge = hanyeah.electricity.elecData.Edge;
+  import Vertex = hanyeah.electricity.elecData.Vertex;
+
   export class ElecEq extends EqBase {
     public U: number = 0;
     public I: number = 0;
@@ -9,8 +12,8 @@ namespace hanyeah.elec {
       super(main);
     }
 
-    public addTerminal(x: number, y: number) {
-      const terminal: Terminal = new Terminal(this.main);
+    public addTerminal(x: number, y: number, vertex: Vertex) {
+      const terminal: Terminal = new Terminal(this.main, vertex);
       terminal.eq = this;
       terminal.x = x;
       terminal.y = y;

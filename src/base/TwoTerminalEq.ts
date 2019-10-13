@@ -1,7 +1,6 @@
 /**
  * Created by hanyeah on 2019/9/21.
  */
-
 namespace hanyeah.elec {
   import Edge = hanyeah.electricity.elecData.Edge;
 
@@ -12,11 +11,9 @@ namespace hanyeah.elec {
 
     constructor(main: ElecMain) {
       super(main);
-      this.terminal0 = this.addTerminal(-50, 0);
-      this.terminal1 = this.addTerminal(50, 0);
+      this.terminal0 = this.addTerminal(-50, 0, this.edge.vertex0);
+      this.terminal1 = this.addTerminal(50, 0, this.edge.vertex1);
       this.edge = new Edge(this.main.world, null, null);
-      this.terminal0.vertex = this.edge.vertex0;
-      this.terminal1.vertex = this.edge.vertex1;
     }
 
     public destroy() {
