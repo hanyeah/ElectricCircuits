@@ -1,4 +1,7 @@
 namespace hanyeah.elec {
+  /**
+   * 电池。
+   */
   export class Battery extends TwoTerminalEq{
     public SU: number = 1.5;
     constructor(main: ElecMain) {

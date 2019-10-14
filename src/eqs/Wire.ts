@@ -3,7 +3,9 @@ namespace hanyeah.elec {
   import Graphics = PIXI.Graphics;
   import Texture = PIXI.Texture;
   import SimpleRope = PIXI.SimpleRope;
-
+  /**
+   * 导线。
+   */
   export class Wire extends Resistance {
     public vertexs: Point[] = [];
     private skin: SimpleRope;

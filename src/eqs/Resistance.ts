@@ -1,4 +1,7 @@
 namespace hanyeah.elec {
+  /**
+   * 电阻。
+   */
   export class Resistance extends TwoTerminalEq{
     constructor(main: ElecMain) {
       super(main);

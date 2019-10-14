@@ -3,6 +3,9 @@
  */
 namespace hanyeah.elec{
   import Graphics = PIXI.Graphics;
+  /**
+   * 滑动变阻器。
+   */
   export class SlideRheostat extends ElecEq{
     public terminal0: Terminal;
     public terminal1: Terminal;

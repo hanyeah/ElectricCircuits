@@ -2,6 +2,10 @@ namespace hanyeah.elec{
   import Graphics = PIXI.Graphics;
   import Point = PIXI.Point;
   import InteractionEvent = PIXI.interaction.InteractionEvent;
+
+  /**
+   * 单刀单掷开关。
+   */
   export class SingleSwitch extends TwoTerminalEq{
     public knife: Graphics;
     constructor(main: ElecMain) {

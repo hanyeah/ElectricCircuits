@@ -5,7 +5,9 @@ namespace hanyeah.elec{
   import Graphics = PIXI.Graphics;
   import Edge = hanyeah.electricity.elecData.Edge;
   import InteractionEvent = PIXI.interaction.InteractionEvent;
-
+  /**
+   * 单刀双掷开关。
+   */
   export class DoubleSwitch extends ElecEq{
     public terminal0: Terminal;
     public terminal1: Terminal;

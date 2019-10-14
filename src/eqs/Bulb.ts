@@ -3,7 +3,9 @@
  */
 namespace hanyeah.elec {
   import Graphics = PIXI.Graphics;
-
+  /**
+   * 小灯泡。
+   */
   export class Bulb extends Resistance {
     private light: Graphics;
     constructor(main: ElecMain) {
