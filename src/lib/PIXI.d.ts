@@ -95,7 +95,7 @@ declare namespace PIXI {
                 displayObject: DisplayObject
             ): void;
             protected update(): void;
-            protected capIHitArea(hitArea: IHitArea): void;
+            protected capHitArea(hitArea: HitArea): void;
             protected addChild(displayObject: DisplayObject): void;
             protected _onClick(e: interaction.InteractionEvent): void;
             protected _onFocus(e: interaction.InteractionEvent): void;
@@ -376,7 +376,7 @@ declare namespace PIXI {
             | PIXI.Ellipse
             | PIXI.Polygon
             | PIXI.RoundedRectangle
-            | PIXI.IHitArea;
+            | PIXI.HitArea;
         buttonMode: boolean;
         cursor: string;
         trackedPointers: { [key: number]: interaction.InteractionTrackingData };
@@ -880,10 +880,10 @@ declare namespace PIXI {
         clone(): Point;
         equals(p: PointLike): boolean;
     }
-    interface IHitArea {
+    interface HitArea {
         contains(x: number, y: number): boolean;
     }
-    class Circle implements IHitArea {
+    class Circle implements HitArea {
         constructor(x?: number, y?: number, radius?: number);
 
         x: number;
@@ -895,7 +895,7 @@ declare namespace PIXI {
         contains(x: number, y: number): boolean;
         getBounds(): Rectangle;
     }
-    class Ellipse implements IHitArea {
+    class Ellipse implements HitArea {
         constructor(
             x?: number,
             y?: number,
@@ -913,7 +913,7 @@ declare namespace PIXI {
         contains(x: number, y: number): boolean;
         getBounds(): Rectangle;
     }
-    class Polygon implements IHitArea {
+    class Polygon implements HitArea {
         constructor(points: Point[] | number[]);
         // Note - Rest Params cannot be combined with |
         //tslint:disable-next-line:unified-signatures
@@ -929,7 +929,7 @@ declare namespace PIXI {
         contains(x: number, y: number): boolean;
         close(): void;
     }
-    class Rectangle implements IHitArea {
+    class Rectangle implements HitArea {
         constructor(x?: number, y?: number, width?: number, height?: number);
 
         x: number;
@@ -952,7 +952,7 @@ declare namespace PIXI {
         fit(rectangle: Rectangle): void;
         enlarge(rectangle: Rectangle): void;
     }
-    class RoundedRectangle implements IHitArea {
+    class RoundedRectangle implements HitArea {
         constructor(
             x?: number,
             y?: number,
@@ -2417,7 +2417,6 @@ declare namespace PIXI {
 
             autoStart: boolean;
             deltaTime: number;
-            deltaMS: number;
             elapsedMS: number;
             lastTime: number;
             speed: number;
@@ -2818,7 +2817,7 @@ declare namespace PIXI {
                 | PIXI.Ellipse
                 | PIXI.Polygon
                 | PIXI.RoundedRectangle
-                | PIXI.IHitArea;
+                | PIXI.HitArea;
             buttonMode: boolean;
             cursor: string;
             trackedPointers: { [key: number]: InteractionTrackingData };
@@ -3288,145 +3287,146 @@ declare namespace PIXI {
     ///////////////////////////////MESH///////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
 
-    class Mesh extends Container {
-      constructor(
-        texture: Texture,
-        vertices?: Float32Array,
-        uvs?: Float32Array,
-        indices?: Uint16Array,
-        drawMode?: number
-      );
+    namespace mesh {
+        class Mesh extends Container {
+            constructor(
+                texture: Texture,
+                vertices?: Float32Array,
+                uvs?: Float32Array,
+                indices?: Uint16Array,
+                drawMode?: number
+            );
 
-      protected _texture: Texture;
-      uvs: Float32Array;
-      vertices: Float32Array;
-      indices: Uint16Array;
-      dirty: number;
-      indexDirty: number;
-      vertexDirty: number;
-      autoUpdate: boolean;
-      dirtyVertex: boolean;
-      protected _geometryVersion: number;
-      blendMode: number;
-      pluginName: string;
-      canvasPadding: number;
-      drawMode: number;
-      texture: Texture;
-      tintRgb: Float32Array;
-      protected _glDatas: { [n: number]: any };
-      protected _uvTransform: extras.TextureMatrix;
-      uploadUvTransform: boolean;
-      multiplyUvs(): void;
-      refresh(forceUpdate?: boolean): void;
-      protected _refresh(): void;
-      protected _renderWebGL(renderer: WebGLRenderer): void;
-      protected _renderCanvas(renderer: CanvasRenderer): void;
-      protected _onTextureUpdate(): void;
-      protected _calculateBounds(): void;
-      containsPoint(point: Point): boolean;
-      tint: number;
+            protected _texture: Texture;
+            uvs: Float32Array;
+            vertices: Float32Array;
+            indices: Uint16Array;
+            dirty: number;
+            indexDirty: number;
+            vertexDirty: number;
+            autoUpdate: boolean;
+            dirtyVertex: boolean;
+            protected _geometryVersion: number;
+            blendMode: number;
+            pluginName: string;
+            canvasPadding: number;
+            drawMode: number;
+            texture: Texture;
+            tintRgb: Float32Array;
+            protected _glDatas: { [n: number]: any };
+            protected _uvTransform: extras.TextureMatrix;
+            uploadUvTransform: boolean;
+            multiplyUvs(): void;
+            refresh(forceUpdate?: boolean): void;
+            protected _refresh(): void;
+            protected _renderWebGL(renderer: WebGLRenderer): void;
+            protected _renderCanvas(renderer: CanvasRenderer): void;
+            protected _onTextureUpdate(): void;
+            protected _calculateBounds(): void;
+            containsPoint(point: Point): boolean;
+            tint: number;
 
-      static DRAW_MODES: {
-        TRIANGLE_MESH: number;
-        TRIANGLES: number;
-      };
-    }
+            static DRAW_MODES: {
+                TRIANGLE_MESH: number;
+                TRIANGLES: number;
+            };
+        }
 
-    class CanvasMeshRenderer {
-      constructor(renderer: CanvasRenderer);
+        class CanvasMeshRenderer {
+            constructor(renderer: CanvasRenderer);
 
-      renderer: CanvasRenderer;
+            renderer: CanvasRenderer;
 
-      render(mesh: Mesh): void;
-      protected _renderTriangleMesh(mesh: Mesh): void;
-      protected _renderTriangles(mesh: Mesh): void;
-      protected _renderDrawTriangle(
-        mesh: Mesh,
-        index0: number,
-        index1: number,
-        index2: number
-      ): void;
-      protected renderMeshFlat(mesh: Mesh): void;
+            render(mesh: Mesh): void;
+            protected _renderTriangleMesh(mesh: Mesh): void;
+            protected _renderTriangles(mesh: Mesh): void;
+            protected _renderDrawTriangle(
+                mesh: Mesh,
+                index0: number,
+                index1: number,
+                index2: number
+            ): void;
+            protected renderMeshFlat(mesh: Mesh): void;
 
-      destroy(): void;
-    }
+            destroy(): void;
+        }
 
-    class MeshRenderer extends ObjectRenderer {
-      constructor(renderer: WebGLRenderer);
+        class MeshRenderer extends ObjectRenderer {
+            constructor(renderer: WebGLRenderer);
 
-      shader: Shader;
-      render(mesh: Mesh): void;
-    }
+            shader: Shader;
+            render(mesh: Mesh): void;
+        }
 
-    class Plane extends Mesh {
-      constructor(
-        texture: Texture,
-        verticesX?: number,
-        verticesY?: number
-      );
-      protected _ready: boolean;
-      verticesX: number;
-      verticesY: number;
-      drawMode: number;
+        class Plane extends Mesh {
+            constructor(
+                texture: Texture,
+                verticesX?: number,
+                verticesY?: number
+            );
+            protected _ready: boolean;
+            verticesX: number;
+            verticesY: number;
+            drawMode: number;
 
-      refresh(): void;
+            refresh(): void;
 
-      protected _onTexureUpdate(): void;
-    }
+            protected _onTexureUpdate(): void;
+        }
 
-    class NineSlicePlane extends Plane {
-      constructor(
-        texture: Texture,
-        leftWidth?: number,
-        topHeight?: number,
-        rightWidth?: number,
-        bottomHeight?: number
-      );
+        class NineSlicePlane extends Plane {
+            constructor(
+                texture: Texture,
+                leftWidth?: number,
+                topHeight?: number,
+                rightWidth?: number,
+                bottomHeight?: number
+            );
 
-      width: number;
-      height: number;
-      leftWidth: number;
-      rightWidth: number;
-      topHeight: number;
-      bottomHeight: number;
+            width: number;
+            height: number;
+            leftWidth: number;
+            rightWidth: number;
+            topHeight: number;
+            bottomHeight: number;
 
-      protected _leftWidth: number;
-      protected _rightWidth: number;
-      protected _topHeight: number;
-      protected _bottomHeight: number;
-      protected _height: number;
-      protected _width: number;
-      protected _origHeight: number;
-      protected _origWidth: number;
-      protected _uvh: number;
-      protected _uvw: number;
+            protected _leftWidth: number;
+            protected _rightWidth: number;
+            protected _topHeight: number;
+            protected _bottomHeight: number;
+            protected _height: number;
+            protected _width: number;
+            protected _origHeight: number;
+            protected _origWidth: number;
+            protected _uvh: number;
+            protected _uvw: number;
 
-      updateHorizontalVertices(): void;
-      updateVerticalVertices(): void;
-      protected drawSegment(
-        context: CanvasRenderingContext2D | WebGLRenderingContext,
-        textureSource: any,
-        w: number,
-        h: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number
-      ): void;
-      protected _renderCanvas(renderer: CanvasRenderer): void;
-      protected _refresh(): void;
-    }
+            updateHorizontalVertices(): void;
+            updateVerticalVertices(): void;
+            protected drawSegment(
+                context: CanvasRenderingContext2D | WebGLRenderingContext,
+                textureSource: any,
+                w: number,
+                h: number,
+                x1: number,
+                y1: number,
+                x2: number,
+                y2: number
+            ): void;
+            protected _renderCanvas(renderer: CanvasRenderer): void;
+            protected _refresh(): void;
+        }
 
-    class SimpleRope extends Mesh {
-      constructor(texture: Texture, points: Point[]);
+        class Rope extends Mesh {
+            constructor(texture: Texture, points: Point[]);
 
-      points: Point[];
-      colors: number[];
-      autoUpdate: boolean;
-      start: number;
-      protected _refresh(): void;
+            points: Point[];
+            colors: number[];
+            autoUpdate: boolean;
+            protected _refresh(): void;
 
-      refreshVertices(): void;
+            refreshVertices(): void;
+        }
     }
     //////////////////////////////////////////////////////////////////////////////
     /////////////////////////////PARTICLES////////////////////////////////////////
@@ -4170,20 +4170,20 @@ declare namespace PIXI {
          * @private
          * @name Strip
          * @memberof PIXI
-         * @see PIXI.Mesh
+         * @see PIXI.mesh.Mesh
          * @deprecated since version 3.0.0
          */
-        type Strip = Mesh;
+        type Strip = mesh.Mesh;
 
         /**
          * @class
          * @private
          * @name Rope
          * @memberof PIXI
-         * @see PIXI.SimpleRope
+         * @see PIXI.mesh.Rope
          * @deprecated since version 3.0.0
          */
-        type Rope = SimpleRope;
+        type Rope = mesh.Rope;
 
         /**
          * @class

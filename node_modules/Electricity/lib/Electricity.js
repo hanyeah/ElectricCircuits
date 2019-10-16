@@ -188,12 +188,14 @@ var hanyeah;
                 __extends(Edge, _super);
                 function Edge(world, vertex0, vertex1) {
                     var _this = _super.call(this) || this;
-                    _this.SI = 0;
-                    _this.SU = 0;
-                    _this.R = 0;
-                    _this.U = 0;
-                    _this.I = 0;
-                    _this.isBreak = false;
+                    _this._SI = 0;
+                    _this._SU = 0;
+                    _this._R = 0;
+                    _this._U = 0;
+                    _this._I = 0;
+                    _this._L = 0;
+                    _this._C = 0;
+                    _this._isBreak = false;
                     _this.worldLN = new ListNode(_this);
                     _this.world = world;
                     world.addEdge(_this);
@@ -209,6 +211,110 @@ var hanyeah;
                     this.vertex0 = null;
                     this.vertex1 = null;
                 };
+                Object.defineProperty(Edge.prototype, "SU", {
+                    get: function () {
+                        return this._SU;
+                    },
+                    set: function (value) {
+                        if (this._SU !== value) {
+                            this._SU = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "SI", {
+                    get: function () {
+                        return this._SI;
+                    },
+                    set: function (value) {
+                        if (this._SI !== value) {
+                            this._SI = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "U", {
+                    get: function () {
+                        return this._U;
+                    },
+                    set: function (value) {
+                        if (this._U !== value) {
+                            this._U = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "I", {
+                    get: function () {
+                        return this._I;
+                    },
+                    set: function (value) {
+                        if (this._I !== value) {
+                            this._I = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "R", {
+                    get: function () {
+                        return this._R;
+                    },
+                    set: function (value) {
+                        if (this._R !== value) {
+                            this._R = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "L", {
+                    get: function () {
+                        return this._L;
+                    },
+                    set: function (value) {
+                        if (this._L !== value) {
+                            this._L = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "C", {
+                    get: function () {
+                        return this._C;
+                    },
+                    set: function (value) {
+                        if (this._C !== value) {
+                            this._C = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Edge.prototype, "isBreak", {
+                    get: function () {
+                        return this._isBreak;
+                    },
+                    set: function (value) {
+                        if (this._isBreak !== value) {
+                            this._isBreak = value;
+                            this.world.dirty = true;
+                        }
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 return Edge;
             }(electricity.HObject));
             elecData.Edge = Edge;
@@ -467,6 +573,7 @@ var hanyeah;
             function World() {
                 var _this = _super.call(this) || this;
                 _this.calculater = new electricity.Calculater();
+                _this.dirty = true;
                 _this.vertexList = new List();
                 _this.edgeList = new List();
                 return _this;
@@ -480,15 +587,19 @@ var hanyeah;
             };
             World.prototype.addVertex = function (vertex) {
                 this.vertexList.add(vertex.worldLN);
+                this.dirty = true;
             };
             World.prototype.removeVertex = function (vertex) {
                 this.vertexList.remove(vertex.worldLN);
+                this.dirty = true;
             };
             World.prototype.addEdge = function (edge) {
                 this.edgeList.add(edge.worldLN);
+                this.dirty = true;
             };
             World.prototype.removeEdge = function (edge) {
                 this.edgeList.remove(edge.worldLN);
+                this.dirty = true;
             };
             World.prototype.getVertexs = function () {
                 return this.vertexList.getAllUserData();
@@ -497,7 +608,10 @@ var hanyeah;
                 return this.edgeList.getAllUserData();
             };
             World.prototype.calculate = function () {
-                this.calculater.calculate(this.getEdges(), this.getVertexs());
+                if (this.dirty) {
+                    this.calculater.calculate(this.getEdges(), this.getVertexs());
+                    this.dirty = false;
+                }
             };
             return World;
         }(electricity.HObject));

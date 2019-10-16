@@ -8,6 +8,7 @@ namespace hanyeah.electricity {
   export class World extends HObject {
 
     public calculater: Calculater = new Calculater();
+    public dirty: boolean = true;
     private vertexList: List = new List();
     private edgeList: List = new List();
 
@@ -25,18 +26,22 @@ namespace hanyeah.electricity {
 
     public addVertex(vertex: Vertex): void {
       this.vertexList.add(vertex.worldLN);
+      this.dirty = true;
     }
 
     public removeVertex(vertex: Vertex): void {
       this.vertexList.remove(vertex.worldLN);
+      this.dirty = true;
     }
 
     public addEdge(edge: Edge): void {
       this.edgeList.add(edge.worldLN);
+      this.dirty = true;
     }
 
     public removeEdge(edge: Edge): void {
       this.edgeList.remove(edge.worldLN);
+      this.dirty = true;
     }
 
     public getVertexs(): Vertex[] {
@@ -48,7 +53,10 @@ namespace hanyeah.electricity {
     }
 
     calculate(): void{
-      this.calculater.calculate(this.getEdges(), this.getVertexs());
+      if (this.dirty){
+        this.calculater.calculate(this.getEdges(), this.getVertexs());
+        this.dirty = false;
+      }
     }
 
   }

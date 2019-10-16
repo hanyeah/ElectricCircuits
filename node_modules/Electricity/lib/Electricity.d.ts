@@ -63,18 +63,28 @@ declare namespace hanyeah.dataStruct {
 declare namespace hanyeah.electricity.elecData {
     import ListNode = hanyeah.dataStruct.ListNode;
     class Edge extends HObject {
-        SI: number;
-        SU: number;
-        R: number;
-        U: number;
-        I: number;
-        isBreak: boolean;
         vertex0: Vertex;
         vertex1: Vertex;
         worldLN: ListNode;
         world: World;
+        private _SI;
+        private _SU;
+        private _R;
+        private _U;
+        private _I;
+        private _L;
+        private _C;
+        private _isBreak;
         constructor(world: World, vertex0: Vertex, vertex1: Vertex);
         destroy(): void;
+        SU: number;
+        SI: number;
+        U: number;
+        I: number;
+        R: number;
+        L: number;
+        C: number;
+        isBreak: boolean;
     }
 }
 /**
@@ -129,6 +139,7 @@ declare namespace hanyeah.electricity {
     import Edge = hanyeah.electricity.elecData.Edge;
     class World extends HObject {
         calculater: Calculater;
+        dirty: boolean;
         private vertexList;
         private edgeList;
         constructor();
