@@ -1,7 +1,6 @@
 /**
  * Created by hanyeah on 2019/8/30.
  */
-/// <reference path="./../node_modules/MatrixMath/lib/MatrixMath.d.ts" />
 namespace hanyeah.electricity{
   import Edge = hanyeah.electricity.elecData.Edge;
   import Vertex = hanyeah.electricity.elecData.Vertex;

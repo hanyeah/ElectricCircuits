@@ -408,7 +408,6 @@ var hanyeah;
 /**
  * Created by hanyeah on 2019/8/30.
  */
-/// <reference path="./../node_modules/MatrixMath/lib/MatrixMath.d.ts" />
 var hanyeah;
 (function (hanyeah) {
     var electricity;
@@ -607,8 +606,9 @@ var hanyeah;
             World.prototype.getEdges = function () {
                 return this.edgeList.getAllUserData();
             };
-            World.prototype.calculate = function () {
-                if (this.dirty) {
+            World.prototype.calculate = function (force) {
+                if (force === void 0) { force = false; }
+                if (force || this.dirty) {
                     this.calculater.calculate(this.getEdges(), this.getVertexs());
                     this.dirty = false;
                 }

@@ -10,11 +10,11 @@
     "copylibs": "node ./scripts/copylibs.js",
     "init": "npm install && npm run copylibs",
     "build": "tsc-plus --reorderFiles && node ./scripts/build.js",
-    "server": "cd ./dist && live-server"
+    "server": "cd ./test && live-server"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "Electricity": "git+ssh://git@github.com:hanyeah/Electricity.git",
     "PixiTs": "git+ssh://git@github.com:hanyeah/PixiTs.git"
-  },
-  "devDependencies": {}
+  }
 }

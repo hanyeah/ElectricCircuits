@@ -1,8 +1,6 @@
-var copyFile = require('./copyfile.js');
+var fileUtil = require('./fileUtil.js');
 
-console.log(__dirname)
-var dir = './../dist';
-copyFile('./../lib/ElecMain.js', dir+'/ElecMain.js');
-copyFile('./../node_modules/Electricity/lib/Electricity.js', dir+'/Electricity.js');
-copyFile('./../node_modules/MatrixMath/lib/MatrixMath.js', dir+'/MatrixMath.js');
-copyFile('./../node_modules/PixiTs/PIXI.js', dir+'/PIXI.js');
+var dir = './../test/js/';
+
+fileUtil.copyAllFiles('./../node_modules', dir, /dist\/.*\.js$/);
+fileUtil.copyAllFiles('./../dist', dir, /\.js$/);

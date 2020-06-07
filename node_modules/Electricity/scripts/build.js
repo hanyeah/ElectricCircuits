@@ -1,10 +1,6 @@
-var path = require('path');
-var fs = require('fs');
+var fileUtil = require('./fileUtil.js');
 
-function copyFile(src, dist) {
-  fs.writeFileSync(path.join(__dirname, dist), fs.readFileSync(path.join(__dirname,src)));
-}
-console.log(__dirname)
-var dir = './../dist';
-copyFile('./../lib/Electricity.js', dir+'/Electricity.js');
-copyFile('./../node_modules/MatrixMath/lib/MatrixMath.js', dir+'/MatrixMath.js');
+var dir = './../test/js/';
+
+fileUtil.copyAllFiles('./../node_modules', dir, /dist\/.*\.js$/);
+fileUtil.copyAllFiles('./../dist', dir, /\.js$/);
